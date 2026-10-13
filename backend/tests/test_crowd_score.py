@@ -29,10 +29,10 @@ def test_exact_crowd_formula_and_estimate_provenance() -> None:
     assert estimate["data_mode"] == "curated_rule_estimate"
     assert estimate["reviewed_at"] == date(2026, 9, 15)
     assert estimate["estimated"] is True
-    assert estimate["notes"] == ["Weather visit-tendency data is unavailable; neutral 50 was used."]
+    assert estimate["notes"] == []
 
 
-def test_missing_inputs_use_neutral_fifties_and_explain_each() -> None:
+def test_missing_inputs_use_neutral_fifties() -> None:
     estimate = estimate_crowd(_destination(popularity=None), date(2026, 10, 17), None)
 
     assert estimate["score"] == 50
@@ -40,7 +40,7 @@ def test_missing_inputs_use_neutral_fifties_and_explain_each() -> None:
     assert estimate["date_demand"] == 50
     assert estimate["event_pressure"] == 50
     assert estimate["weather_visit_tendency"] == 50
-    assert len(estimate["notes"]) == 4
+    assert estimate["notes"] == []
 
 
 @pytest.mark.parametrize(
@@ -52,10 +52,10 @@ def test_crowd_level_boundaries(score: int, level: str) -> None:
     assert crowd_level(score) == level
 
 
-def test_date_demand_is_documented_and_missing_season_is_neutral() -> None:
+def test_date_demand_missing_season_is_neutral() -> None:
     weekend = date(2026, 10, 17)
 
     assert estimate_date_demand(weekend, [10]) == (80, [])
     score, notes = estimate_date_demand(weekend, [])
     assert score is None
-    assert "neutral 50" in notes[0]
+    assert notes == []

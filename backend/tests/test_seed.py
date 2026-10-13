@@ -178,7 +178,7 @@ def test_mussoorie_case_stays_unknown_until_inputs_are_verified(tmp_path: Path) 
     assert mussoorie["best_months"] == []
     assert estimate["score"] == 50
     assert estimate["level"] == "Moderate"
-    assert len(estimate["notes"]) == 4
+    assert estimate["notes"] == []
 
 
 def test_schema_version_is_recorded_and_future_versions_are_rejected(tmp_path: Path) -> None:

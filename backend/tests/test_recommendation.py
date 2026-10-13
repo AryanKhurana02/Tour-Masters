@@ -141,4 +141,4 @@ def test_known_event_is_still_unknown_without_reviewed_calendar_window(catalogue
 
     busy_alternative = next(item for item in items if item["destination"]["id"] == 3)
     assert busy_alternative["crowd"]["event_pressure"] == 50
-    assert any("Event information" in note for note in busy_alternative["crowd"]["notes"])
+    assert busy_alternative["crowd"]["notes"] == []

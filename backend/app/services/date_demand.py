@@ -3,7 +3,7 @@ from datetime import date
 
 def estimate_date_demand(target_date: date, best_months: list[int]) -> tuple[int | None, list[str]]:
     if not best_months:
-        return None, ["Curated peak-month information is unavailable; date demand uses neutral 50."]
+        return None, []
 
     score = 50
     if target_date.weekday() >= 5:

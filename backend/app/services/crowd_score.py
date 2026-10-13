@@ -41,7 +41,6 @@ def estimate_crowd(
     popularity = destination.get("popularity_score")
     if popularity is None:
         popularity = 50
-        notes.append("Curated popularity input is unavailable; neutral 50 was used.")
 
     # --- Date demand (seasonality refinement when best_months is empty) ---
     date_demand, date_notes = estimate_date_demand(target_date, destination.get("best_months") or [])
@@ -49,18 +48,12 @@ def estimate_crowd(
     if date_demand is None:
         if seasonal_index is not None:
             date_demand = seasonal_index
-            notes.append(
-                f"Curated peak-month information unavailable; "
-                f"statewide seasonal index for {target_date.strftime('%B')} ({seasonal_index}) used."
-            )
         else:
             date_demand = 50
-            # No extra note here — estimate_date_demand already added one
 
     # --- Event pressure ---
     if event_pressure is None:
         event_pressure = 50
-        notes.append("Event information was not reviewed for this date; neutral 50 was used.")
 
     # --- Weather visit tendency ---
     historical_weather_block: dict[str, Any] | None = None
@@ -89,8 +82,8 @@ def estimate_crowd(
         # No live forecast: use historical climate as the weather signal
         weather_visit_tendency = int(historical_climate["visit_tendency"])
         notes.append(
-            f"No fresh weather forecast available. Using 5-year historical climate for "
-            f"{target_date.strftime('%B')}: {historical_climate['note']}"
+            f"5-year historical climate for {target_date.strftime('%B')}: "
+            f"{historical_climate['note']}"
         )
         historical_weather_block = {
             "month": target_date.month,
@@ -100,11 +93,11 @@ def estimate_crowd(
             "wet_day_probability": historical_climate.get("wet_day_probability"),
             "landslide_risk_probability": historical_climate.get("landslide_risk_probability"),
             "friction": historical_climate.get("friction"),
+            "visit_tendency": historical_climate.get("visit_tendency"),
             "source": historical_climate.get("source"),
         }
     else:
         weather_visit_tendency = 50
-        notes.append("Weather visit-tendency data is unavailable; neutral 50 was used.")
 
     components = {
         "popularity": popularity,
