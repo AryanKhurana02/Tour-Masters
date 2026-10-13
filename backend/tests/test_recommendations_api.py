@@ -1,3 +1,6 @@
+from datetime import datetime, timezone
+
+from app.db.database import connect_database
 from tests.asgi_client import TestClient
 
 
@@ -29,6 +32,32 @@ def test_recommendation_api_returns_backend_scores_and_provenance(test_client: T
     assert item["crowd"]["estimated"] is True
     assert item["crowd"]["data_mode"] == "curated_rule_estimate"
     assert item["crowd"]["reviewed_at"] == "2026-09-15"
+
+
+def test_recommendation_uses_fresh_weather_forecast_from_sqlite(
+    test_client: TestClient,
+    catalogue_path,
+) -> None:
+    with connect_database(catalogue_path) as connection:
+        with connection:
+            connection.execute(
+                """
+                INSERT INTO weather_forecasts (
+                    destination_id, forecast_date, temp_max, temp_min, temp_mean,
+                    precipitation_mm, weather_visit_tendency, retrieved_at, expires_at, source_url
+                ) VALUES (2, '2026-10-17', 20, 10, 15, 0, 100,
+                          '2026-10-13T12:00:00+00:00', '2099-10-14T12:00:00+00:00',
+                          'https://open-meteo.com/en/docs')
+                """
+            )
+
+    response = test_client.post("/api/recommendations", json=_request())
+
+    assert response.status_code == 200
+    crowd = response.json()["items"][0]["crowd"]
+    assert crowd["weather_visit_tendency"] == 100
+    assert crowd["score"] == 42
+    assert any("Open-Meteo forecast" in note for note in crowd["notes"])
 
 
 def test_recommendations_without_start_place_search_region_wide(test_client: TestClient) -> None:

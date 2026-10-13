@@ -21,6 +21,7 @@ from app.services.crowd_evaluation import (
     normalize_destination_name,
 )
 from app.services.crowd_score import estimate_crowd
+from app.repositories.weather_repository import get_weather_visit_tendency
 
 
 _DEFAULT_BENCHMARK_PATH = PROJECT_ROOT / "data" / "validation" / "holiday_crowd_mapping.csv"
@@ -59,7 +60,17 @@ def evaluate(
                     destination_id=destination["id"],
                     target_date=benchmark_date,
                 )
-                estimate = estimate_crowd(destination, benchmark_date, event_pressure)
+                weather_signal = get_weather_visit_tendency(
+                    connection,
+                    destination_id=destination["id"],
+                    target_date=benchmark_date,
+                )
+                estimate = estimate_crowd(
+                    destination,
+                    benchmark_date,
+                    event_pressure,
+                    weather_signal,
+                )
                 scores[(benchmark_date, normalized_name)] = estimate["score"]
 
     report = evaluate_crowd_benchmarks(

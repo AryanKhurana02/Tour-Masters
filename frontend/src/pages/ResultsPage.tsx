@@ -7,6 +7,7 @@ import { StayCard } from "../components/StayCard";
 import { createItinerary, getRouteFromHub } from "../services/api";
 import type { RecommendationRequest, RecommendationResponse, RouteEstimate } from "../types/api";
 import { formatDate } from "../utils/presentation";
+import { DemoNotice } from "../components/DemoNotice";
 
 interface ResultsState {
   request: RecommendationRequest;
@@ -179,7 +180,7 @@ export function ResultsPage() {
           })}
         </div>
       )}
-      <div className="results-footnote">Match scores come from the backend. Mock inventory is not a live check, and a demo request does not reserve a room.</div>
+      <DemoNotice />
     </div>
   );
 }

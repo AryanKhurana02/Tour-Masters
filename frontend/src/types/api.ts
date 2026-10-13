@@ -93,6 +93,18 @@ export interface SavedStayRequest {
   crowd: CrowdEstimate;
 }
 
+export interface HistoricalWeatherSignal {
+  month: number;
+  avg_precipitation_mm?: number;
+  avg_temp_max_c?: number;
+  avg_temp_min_c?: number;
+  wet_day_probability?: number;
+  landslide_risk_probability?: number;
+  friction?: number;
+  source?: string;
+  note?: string;
+}
+
 export interface CrowdEstimate {
   score: number;
   level: "Quiet" | "Moderate" | "Busy" | "Very busy";
@@ -104,6 +116,12 @@ export interface CrowdEstimate {
   notes: string[];
   data_mode: "curated_rule_estimate";
   reviewed_at: string;
+  friction_cue?: {
+    cue_type: "weather_warning" | "road_bottleneck" | "water_scarcity" | "resting";
+    message: string;
+    severity: "low" | "medium" | "high";
+  };
+  historical_weather?: HistoricalWeatherSignal;
 }
 
 export interface RecommendationItem {
@@ -147,6 +165,48 @@ export interface RouteEstimate {
   source: "OpenRouteService";
   retrieved_at: string;
   notes: string[];
+}
+
+export interface HolidayCrowdData {
+  holidayName: string;
+  date: string;
+  mostCrowded: string[];
+  leastCrowded: string[];
+  crowdCategory: string;
+}
+
+export interface MonthlyClimatology {
+  destination_id: string;
+  month: number;
+  avg_precipitation_mm: number;
+  avg_rain_mm: number;
+  avg_snowfall_cm: number;
+  avg_temp_max_c: number;
+  avg_temp_min_c: number;
+  wet_day_probability: number;
+  landslide_risk_probability: number;
+  friction: number;
+  visit_tendency: number;
+  sample_days: number;
+  source: string;
+  note: string;
+}
+
+export interface SeasonalityData {
+  month_name: string;
+  month: number;
+  domestic_index: number;
+  foreign_index: number;
+  combined_index: number;
+  activity_focus: string;
+  weather_condition: string;
+}
+
+export interface WeatherHistoryResponse {
+  destination_id: number;
+  destination_name: string;
+  monthly_climatology: MonthlyClimatology[];
+  seasonality: SeasonalityData[];
 }
 
 export interface ItineraryBlock {

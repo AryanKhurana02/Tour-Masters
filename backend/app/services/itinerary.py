@@ -16,6 +16,8 @@ from app.repositories.weather_repository import get_weather_visit_tendency
 from app.schemas.itinerary import ItineraryRequest
 from app.services.crowd_score import estimate_crowd
 from app.services.itinerary_validation import validate_itinerary_selection
+from app.services.seasonality import get_seasonal_demand_for_month
+from app.services.weather_history import get_historical_weather_friction
 
 
 logger = logging.getLogger("pahadpath.itinerary")
@@ -67,11 +69,20 @@ def build_itinerary(
             destination_id=destination["id"],
             target_date=target_date,
         )
+
+        # Optional enrichments per day
+        historical_climate = get_historical_weather_friction(
+            destination["name"], target_date.month
+        )
+        seasonal_index = get_seasonal_demand_for_month(target_date.month)
+
         crowd = estimate_crowd(
             destination,
             target_date,
             event_pressure,
             weather_signal,
+            historical_climate,
+            seasonal_index,
         )
         template_texts = [
             f"Keep this {period} flexible and explore at your own pace."

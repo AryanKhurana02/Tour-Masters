@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS weather_locations (
     elevation_m REAL CHECK (elevation_m IS NULL OR elevation_m BETWEEN -500 AND 9000),
     timezone TEXT NOT NULL CHECK (length(trim(timezone)) > 0),
     source_label TEXT NOT NULL CHECK (length(trim(source_label)) > 0),
-    source_url TEXT NOT NULL,
+    source_url TEXT NOT NULL CHECK (length(trim(source_url)) > 0),
     reviewer TEXT NOT NULL CHECK (length(trim(reviewer)) > 0),
     reviewed_at TEXT NOT NULL CHECK (date(reviewed_at) IS NOT NULL),
     enabled INTEGER NOT NULL DEFAULT 1 CHECK (enabled IN (0, 1))
@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS weather_climatology (
     weather_visit_tendency INTEGER NOT NULL CHECK (weather_visit_tendency BETWEEN 0 AND 100),
     sample_count INTEGER NOT NULL CHECK (sample_count > 0),
     retrieved_at TEXT NOT NULL CHECK (datetime(retrieved_at) IS NOT NULL),
-    source_url TEXT NOT NULL,
+    source_url TEXT NOT NULL CHECK (length(trim(source_url)) > 0),
     PRIMARY KEY (destination_id, calendar_month)
 );
 
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS weather_forecasts (
     weather_visit_tendency INTEGER NOT NULL CHECK (weather_visit_tendency BETWEEN 0 AND 100),
     retrieved_at TEXT NOT NULL CHECK (datetime(retrieved_at) IS NOT NULL),
     expires_at TEXT NOT NULL CHECK (datetime(expires_at) IS NOT NULL),
-    source_url TEXT NOT NULL,
+    source_url TEXT NOT NULL CHECK (length(trim(source_url)) > 0),
     PRIMARY KEY (destination_id, forecast_date)
 );
 

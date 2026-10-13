@@ -1,0 +1,11 @@
+src/pages/PlacePage.tsx(117,22): error TS2345: Argument of type '{ cue_type: string; message: string; severity: string; }' is not assignable to parameter of type 'SetStateAction<{ cue_type: "weather_warning" | "road_bottleneck" | "water_scarcity" | "resting"; message: string; severity: "low" | "medium" | "high"; } | null>'.
+  Type '{ cue_type: string; message: string; severity: string; }' is not assignable to type '{ cue_type: "weather_warning" | "road_bottleneck" | "water_scarcity" | "resting"; message: string; severity: "low" | "medium" | "high"; }'.
+    Types of property 'cue_type' are incompatible.
+      Type 'string' is not assignable to type '"weather_warning" | "road_bottleneck" | "water_scarcity" | "resting"'.
+src/pages/PlacePage.tsx(177,13): error TS18047: 'stays' is possibly 'null'.
+src/pages/PlacePage.tsx(182,20): error TS5076: '||' and '??' operations cannot be mixed without parentheses.
+src/pages/PlacePage.tsx(196,53): error TS2322: Type 'Destination | null' is not assignable to type 'Destination'.
+  Type 'null' is not assignable to type 'Destination'.
+src/services/api.ts(157,41): error TS2538: Type 'null' cannot be used as an index type.
+src/services/api.ts(163,19): error TS2349: This expression is not callable.
+  Type 'String' has no call signatures.

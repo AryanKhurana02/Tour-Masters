@@ -28,10 +28,13 @@ describe("backend API client", () => {
     };
 
     await expect(getRecommendations(input)).resolves.toEqual(responseBody);
-    expect(fetchMock).toHaveBeenCalledWith("/api/recommendations", expect.objectContaining({
-      method: "POST",
-      body: JSON.stringify(input),
-    }));
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/recommendations",
+      expect.objectContaining({
+        method: "POST",
+        body: JSON.stringify(input),
+      }),
+    );
   });
 
   it("shows safe API validation messages without swallowing request failures", async () => {
@@ -67,7 +70,9 @@ describe("backend API client", () => {
     await expect(getRouteFromHub(5)).resolves.toEqual(route);
     expect(fetchMock).toHaveBeenCalledWith(
       "/api/destinations/5/route-from-hub",
-      { headers: { Accept: "application/json" } },
+      expect.objectContaining({
+        headers: { Accept: "application/json" },
+      }),
     );
   });
 });

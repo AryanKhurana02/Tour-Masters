@@ -11,6 +11,8 @@ from app.repositories.destination_repository import (
 from app.repositories.weather_repository import get_weather_visit_tendency
 from app.schemas.recommendation import RecommendationRequest
 from app.services.crowd_score import estimate_crowd
+from app.services.seasonality import get_seasonal_demand_for_month
+from app.services.weather_history import get_historical_weather_friction
 
 
 def _stay_fit(
@@ -100,11 +102,20 @@ def recommend(
             destination_id=destination["id"],
             target_date=request.start_date,
         )
+
+        # Optional enrichments: 5-year historical climate + statewide seasonality
+        historical_climate = get_historical_weather_friction(
+            destination["name"], request.start_date.month
+        )
+        seasonal_index = get_seasonal_demand_for_month(request.start_date.month)
+
         crowd = estimate_crowd(
             destination,
             request.start_date,
             event_pressure,
             weather_signal,
+            historical_climate,
+            seasonal_index,
         )
         stays = list_homestays(connection, destination["id"])
         interest, interest_reason = _interest_fit(

@@ -10,6 +10,8 @@ from app.repositories.destination_repository import (
     list_homestays,
 )
 from app.schemas.destination import DestinationDetail, DestinationRead, HomestayRead
+from app.services.seasonality import get_all_months as get_all_seasonality
+from app.services.weather_history import get_all_months_climatology, get_monthly_climatology
 
 
 router = APIRouter(prefix="/api", tags=["catalogue"])
@@ -43,3 +45,24 @@ def homestays(
     if get_destination(connection, destination_id) is None:
         raise HTTPException(status_code=404, detail="Destination was not found.")
     return list_homestays(connection, destination_id)
+
+
+@router.get("/destinations/{destination_id}/weather-history")
+def destination_weather_history(
+    destination_id: int,
+    connection: sqlite3.Connection = Depends(get_database),
+) -> dict:
+    """Return 5-year monthly climatology and statewide seasonality for a destination."""
+    destination = get_destination(connection, destination_id)
+    if destination is None:
+        raise HTTPException(status_code=404, detail="Destination was not found.")
+
+    climatology = get_all_months_climatology(destination["name"])
+    seasonality = get_all_seasonality()
+
+    return {
+        "destination_id": destination_id,
+        "destination_name": destination["name"],
+        "monthly_climatology": climatology,
+        "seasonality": seasonality,
+    }

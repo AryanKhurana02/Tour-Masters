@@ -10,6 +10,8 @@ from pathlib import Path
 from typing import Any, Protocol
 from zoneinfo import ZoneInfo
 
+from requests.exceptions import RequestException
+
 
 ARCHIVE_URL = "https://archive-api.open-meteo.com/v1/archive"
 FORECAST_URL = "https://api.open-meteo.com/v1/forecast"
@@ -39,7 +41,12 @@ class WeatherResponse(Protocol):
 
 
 class OpenMeteoClient(Protocol):
-    def weather_api(self, url: str, params: dict[str, Any]) -> list[WeatherResponse]: ...
+    def weather_api(
+        self,
+        url: str,
+        params: dict[str, Any],
+        timeout: int,
+    ) -> list[WeatherResponse]: ...
 
 
 def create_client(cache_path: str | Path, *, expire_after: int) -> OpenMeteoClient:
@@ -324,7 +331,7 @@ def _refresh_source(
                     parameters["end_date"] = (
                         start_date + timedelta(days=expected_days - 1)
                     ).isoformat()
-                responses = client.weather_api(url, parameters)
+                responses = client.weather_api(url, params=parameters, timeout=30)
                 if not responses:
                     raise ValueError("Open-Meteo returned no locations.")
                 rows = _daily_rows(
@@ -350,7 +357,7 @@ def _refresh_source(
                         retrieved_at,
                     )
                 successes += 1
-            except Exception as error:
+            except (OSError, RequestException, TypeError, ValueError) as error:
                 failures.append(str(location["name"]))
                 logger.warning(
                     "Open-Meteo %s refresh failed for destination=%s error=%s",

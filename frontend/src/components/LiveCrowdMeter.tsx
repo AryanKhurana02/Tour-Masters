@@ -46,17 +46,10 @@ export function LiveCrowdMeter({ destinationId }: { destinationId: string | numb
 
   return (
     <div className="live-crowd-container">
-      <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
-        <span className="live-indicator"></span>
-        <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 600, color: 'var(--ink)' }}>
-          Live Crowd Estimate
-        </h3>
+      <div className={`live-badge live-badge--${band.label.toLowerCase().replace(' ', '-')}`}>
+        <span>{band.label}</span>
       </div>
-
-      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', fontWeight: 'bold' }}>
-        <span style={{ color: band.color }}>{band.label}</span>
-        <span>{metric.live_crowd_index}/100</span>
-      </div>
+      <div className="live-score">{metric.live_crowd_index}/100</div>
 
       <div className="meter-bar-bg">
         <div
@@ -67,7 +60,6 @@ export function LiveCrowdMeter({ destinationId }: { destinationId: string | numb
 
       <p className="live-meta">
         Updated: {new Date(metric.timestamp).toLocaleTimeString()} · Source: {metric.data_source.replace('_', ' ')}
-        {metric.note && <><br/>{metric.note}</>}
       </p>
     </div>
   );

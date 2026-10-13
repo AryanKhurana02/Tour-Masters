@@ -50,7 +50,7 @@ export function StayBookingPanel({
       .catch((cause: unknown) => {
         if (active) {
           setInventory(undefined);
-          setError(cause instanceof Error ? cause.message : "Mock dates could not be loaded.");
+          setError(cause instanceof Error ? cause.message : "Availability could not be loaded.");
         }
       })
       .finally(() => { if (active) setLoading(false); });
@@ -60,7 +60,7 @@ export function StayBookingPanel({
   const expectedDates = Array.from({ length: nights }, (_, index) => addDays(checkIn, index));
   const inventoryByDate = new Map((inventory?.days ?? []).map((day) => [day.date, day]));
   const datesCovered = expectedDates.every((date) => inventoryByDate.has(date));
-  const hasMockUnits = datesCovered && expectedDates.every(
+  const hasUnits = datesCovered && expectedDates.every(
     (date) => (inventoryByDate.get(date)?.available_units ?? 0) > 0,
   );
 
@@ -88,17 +88,16 @@ export function StayBookingPanel({
       await saveTrip(saved);
       navigate(`/saved/${saved.id}`);
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "The demo request could not be sent.");
+      setError(cause instanceof Error ? cause.message : "The request could not be sent.");
     } finally {
       setSubmitting(false);
     }
   }
 
   return (
-    <section className="booking-panel" aria-label={`Demo stay request for ${stay.name}`}>
+    <section className="booking-panel" aria-label={`Stay request for ${stay.name}`}>
       <div className="booking-panel-heading">
-        <span className="booking-demo-label">Mock dates · demo only</span>
-        <p>Check sample dates. A request will not reserve a room.</p>
+        <p>Check dates and send a request. A request is not a confirmed booking.</p>
       </div>
       <div className="booking-fields">
         <label>
@@ -123,7 +122,7 @@ export function StayBookingPanel({
         </label>
       </div>
       <div className="inventory-status" role="status" aria-live="polite">
-        {loading ? "Checking sample dates…" : error ? "Sample dates could not be checked." : !datesCovered ? "No sample dates are listed for every night. Try another date." : hasMockUnits ? "Sample dates show units. This is not confirmed availability." : "The sample shows no units for at least one night."}
+        {loading ? "Checking availability…" : error ? "Availability could not be checked." : !datesCovered ? "No sample data for every night. Try another date." : hasUnits ? "Units shown for these dates." : "No units available for at least one night."}
       </div>
       {inventory?.days.length ? (
         <ul className="inventory-days">
@@ -132,17 +131,17 @@ export function StayBookingPanel({
             return (
               <li key={day}>
                 <span>{formatDate(day)}</span>
-                <strong>{row ? `${row.available_units} sample ${row.available_units === 1 ? "unit" : "units"}` : "Not listed"}</strong>
+                <strong>{row ? `${row.available_units} unit${row.available_units === 1 ? "" : "s"}` : "Not listed"}</strong>
               </li>
             );
           })}
         </ul>
       ) : null}
       {error && <p className="form-error" role="alert">{error}</p>}
-      <button className="button button-primary" type="button" disabled={loading || submitting || !hasMockUnits} onClick={() => void submitRequest()}>
-        {submitting ? <><LoaderCircle size={17} className="spin" /> Sending demo request…</> : "Send a non-binding demo request"}
+      <button className="button button-primary" type="button" disabled={loading || submitting || !hasUnits} onClick={() => void submitRequest()}>
+        {submitting ? <><LoaderCircle size={17} className="spin" /> Sending…</> : "Send request"}
       </button>
-      <p className="booking-privacy-note">No name, phone, payment, or contact details are collected.</p>
+      <p className="booking-privacy-note">No personal details collected.</p>
     </section>
   );
 }

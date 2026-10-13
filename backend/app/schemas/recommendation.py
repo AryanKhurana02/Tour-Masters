@@ -1,5 +1,5 @@
 from datetime import date
-from typing import Literal
+from typing import Literal, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
@@ -34,6 +34,28 @@ class RecommendationRequest(BaseModel):
         return normalized
 
 
+class CrowdFrictionCue(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    cue_type: Literal["weather_warning"] | Literal["road_bottleneck"] | Literal["water_scarcity"] | Literal["resting"]
+    message: str = Field(min_length=1)
+    severity: Literal["low"] | Literal["medium"] | Literal["high"]
+
+
+class HistoricalWeatherSignal(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    month: int = Field(ge=1, le=12)
+    avg_precipitation_mm: float | None = None
+    avg_temp_max_c: float | None = None
+    avg_temp_min_c: float | None = None
+    wet_day_probability: float | None = None
+    landslide_risk_probability: float | None = None
+    friction: int | None = Field(default=None, ge=0, le=100)
+    visit_tendency: int | None = Field(default=None, ge=0, le=100)
+    source: str | None = None
+
+
 class CrowdEstimate(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -47,6 +69,8 @@ class CrowdEstimate(BaseModel):
     notes: list[str]
     data_mode: Literal["curated_rule_estimate"] = "curated_rule_estimate"
     reviewed_at: date
+    friction_cue: Optional[CrowdFrictionCue] = None
+    historical_weather: Optional[HistoricalWeatherSignal] = None
 
 
 class RecommendationFits(BaseModel):
