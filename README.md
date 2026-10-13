@@ -15,7 +15,8 @@ PahadPath is a homestay discovery PWA for Uttarakhand. Travellers choose a place
 2. Backend: `python -m app.db.seed` → `python -m uvicorn app.main:app --reload` → check `http://127.0.0.1:8000/api/health`.
 3. Frontend: `cd frontend` → `npm install` → `npm run dev`; checks: backend `python -m pytest -q`, frontend `npm test` and `npm run build`.
 
-The available workspace interpreter used during validation was Python 3.12.10. Python 3.11 is the target but has not yet been verified in this environment.
+Optional: Live metrics (run in a separate terminal):
+4. `python -m scripts.refresh_live_metrics` — populates real-time crowd estimates (simulated) into the database.
 
 ## Configuration and curated data
 
@@ -37,6 +38,7 @@ Two optional backend maintenance commands read their inputs from SQLite and neve
 - `POST /api/booking-requests` (creates a non-binding demo request only)
 - `GET /api/data-sources` (refresh status and retrieval timestamps for the weather sources)
 - `GET /api/destinations/{id}/route-from-hub` (Mussoorie case study only; requires `ORS_API_KEY`, rate-limited to 5/minute)
+- `GET /api/destinations/{id}/live-metrics` (live crowd estimate; returns fallback if no recent data)
 
 Errors use an `error` object with stable code, generic or safe message, and request ID. Pydantic validation errors do not echo rejected input. Requests return `X-Request-ID`; request logs include method, status, duration and correlation ID, not request bodies. Recommendation and itinerary endpoints use process-local SlowAPI limits of 30/minute and 10/minute; use a shared gateway/limiter before multi-worker deployment.
 

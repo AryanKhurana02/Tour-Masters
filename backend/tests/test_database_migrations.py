@@ -8,7 +8,7 @@ import pytest
 from app.db.database import SCHEMA_PATH, connect_database, initialize_database
 
 
-def test_schema_v1_migrates_additively_to_v3(tmp_path: Path) -> None:
+def test_schema_v1_migrates_additively_to_v4(tmp_path: Path) -> None:
     database = tmp_path / "legacy.db"
     with sqlite3.connect(database) as connection:
         connection.execute("PRAGMA foreign_keys = ON")
@@ -30,7 +30,7 @@ def test_schema_v1_migrates_additively_to_v3(tmp_path: Path) -> None:
     initialize_database(database)
 
     with sqlite3.connect(database) as connection:
-        assert connection.execute("PRAGMA user_version").fetchone()[0] == 3
+        assert connection.execute("PRAGMA user_version").fetchone()[0] == 4
         assert connection.execute("SELECT name FROM destinations WHERE id = 1").fetchone() == (
             "Existing place",
         )
@@ -50,6 +50,7 @@ def test_schema_v1_migrates_additively_to_v3(tmp_path: Path) -> None:
             "weather_climatology",
             "weather_forecasts",
             "data_source_refreshes",
+            "live_tourist_metrics",
         } <= tables
 
 
@@ -59,7 +60,7 @@ def test_fresh_database_applies_all_migrations(tmp_path: Path) -> None:
     initialize_database(database)
 
     with connect_database(database) as connection:
-        assert connection.execute("PRAGMA user_version").fetchone()[0] == 3
+        assert connection.execute("PRAGMA user_version").fetchone()[0] == 4
         with pytest.raises(sqlite3.IntegrityError):
             with connection:
                 connection.execute(
@@ -72,6 +73,10 @@ def test_fresh_database_applies_all_migrations(tmp_path: Path) -> None:
         assert connection.execute(
             "SELECT name FROM sqlite_master WHERE type = 'index' "
             "AND name = 'idx_homestay_inventory_date'"
+        ).fetchone() is not None
+        assert connection.execute(
+            "SELECT name FROM sqlite_master WHERE type = 'index' "
+            "AND name = 'idx_live_tourist_metrics_destination_timestamp'"
         ).fetchone() is not None
 
 

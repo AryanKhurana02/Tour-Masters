@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 
 import { CrowdBreakdown } from "../components/CrowdBreakdown";
+import { LiveCrowdMeter } from "../components/LiveCrowdMeter";
 import { MonthStrip } from "../components/MonthStrip";
 import { StayBookingPanel } from "../components/StayBookingPanel";
 import { getDestination, getHomestays } from "../services/api";
@@ -67,6 +68,7 @@ export function PlacePage() {
       <section className="place-crowd">
         <h2>Estimated crowd for {formatDate(checkIn)}</h2>
         {crowd ? <CrowdBreakdown crowd={crowd} /> : <p>Choose this place from trip results to see its backend estimate for your date.</p>}
+        <LiveCrowdMeter destinationId={destinationId} />
       </section>
       <section className="place-stays">
         <div className="section-heading">

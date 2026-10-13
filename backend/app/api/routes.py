@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import sqlite3
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 
@@ -69,4 +69,44 @@ def route_from_dehradun_hub(
             "Route distance and duration may change and do not report road closures, road safety, weather hazards, or accessibility conditions.",
             "This Dehradun hub baseline is separate from the crowd estimate and is not a personalized route.",
         ],
+    }
+
+
+@router.get(
+    "/destinations/{destination_id}/live-metrics",
+    tags=["live metrics"],
+)
+def get_live_metrics(
+    destination_id: int,
+    connection: sqlite3.Connection = Depends(get_database),
+) -> dict:
+    destination = get_destination(connection, destination_id)
+    if destination is None:
+        raise HTTPException(status_code=404, detail="Destination was not found.")
+
+    cutoff = datetime.now(timezone.utc) - timedelta(hours=2)
+    metric = connection.execute(
+        """
+        SELECT live_crowd_index, data_source, timestamp
+        FROM live_tourist_metrics
+        WHERE destination_id = ? AND timestamp >= ?
+        ORDER BY timestamp DESC
+        LIMIT 1
+        """,
+        (destination_id, cutoff.isoformat(timespec="seconds")),
+    ).fetchone()
+
+    if not metric:
+        return {
+            "live_crowd_index": 50,
+            "data_source": "fallback_estimate",
+            "timestamp": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+            "note": "Live data not yet available. Using neutral estimate.",
+        }
+
+    return {
+        "destination_id": destination_id,
+        "live_crowd_index": metric["live_crowd_index"],
+        "data_source": metric["data_source"],
+        "timestamp": metric["timestamp"],
     }
