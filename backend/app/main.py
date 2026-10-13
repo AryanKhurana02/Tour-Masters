@@ -24,6 +24,7 @@ from app.api.bookings import router as bookings_router
 from app.api.itineraries import router as itineraries_router
 from app.api.rate_limit import limiter
 from app.api.recommendations import router as recommendations_router
+from app.api.routes import router as routes_router
 from app.config import Settings, load_settings
 from app.integrations.llm_client import TextOnlyGenerator
 
@@ -95,6 +96,7 @@ def create_app(
     app.include_router(bookings_router)
     app.include_router(destinations_router)
     app.include_router(recommendations_router)
+    app.include_router(routes_router)
     app.include_router(itineraries_router)
     logger.info("PahadPath API configured")
     return app

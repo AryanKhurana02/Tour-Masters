@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { createItinerary, getRecommendations } from "./api";
+import { createItinerary, getRecommendations, getRouteFromHub } from "./api";
 
 describe("backend API client", () => {
   beforeEach(() => {
@@ -45,5 +45,29 @@ describe("backend API client", () => {
       homestay_ids: [null],
       use_llm: false,
     })).rejects.toThrow("Request validation failed.");
+  });
+
+  it("requests route context from the fixed hub through the backend", async () => {
+    const route = {
+      destination_id: 5,
+      origin_label: "Dehradun hub",
+      destination_name: "Mussoorie",
+      distance_meters: 34567,
+      duration_seconds: 3720,
+      estimated: true,
+      source: "OpenRouteService",
+      retrieved_at: "2026-10-13T12:00:00Z",
+      notes: ["Route estimate only."],
+    };
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify(route), { status: 200 }),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    await expect(getRouteFromHub(5)).resolves.toEqual(route);
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/destinations/5/route-from-hub",
+      { headers: { Accept: "application/json" } },
+    );
   });
 });

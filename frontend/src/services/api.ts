@@ -9,6 +9,7 @@ import type {
   MockInventoryResponse,
   RecommendationRequest,
   RecommendationResponse,
+  RouteEstimate,
 } from "../types/api";
 
 const apiRoot = (import.meta.env.VITE_API_BASE_URL || "/api").replace(/\/$/, "");
@@ -54,6 +55,10 @@ export function getRecommendations(
     method: "POST",
     body: JSON.stringify(input),
   });
+}
+
+export function getRouteFromHub(destinationId: number): Promise<RouteEstimate> {
+  return request<RouteEstimate>(`/destinations/${destinationId}/route-from-hub`);
 }
 
 export function getDestinations(): Promise<

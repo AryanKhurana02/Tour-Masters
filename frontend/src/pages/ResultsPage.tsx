@@ -1,11 +1,11 @@
-import { ArrowLeft, ArrowRight, Compass, LoaderCircle, MapPin, Sparkles } from "lucide-react";
+import { ArrowLeft, ArrowRight, Compass, LoaderCircle, MapPin, Route, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import { CrowdBreakdown } from "../components/CrowdBreakdown";
 import { StayCard } from "../components/StayCard";
-import { createItinerary } from "../services/api";
-import type { RecommendationRequest, RecommendationResponse } from "../types/api";
+import { createItinerary, getRouteFromHub } from "../services/api";
+import type { RecommendationRequest, RecommendationResponse, RouteEstimate } from "../types/api";
 import { formatDate } from "../utils/presentation";
 
 interface ResultsState {
@@ -18,12 +18,35 @@ export function ResultsPage() {
   const navigate = useNavigate();
   const routeState = location.state as ResultsState | null;
   const [creatingId, setCreatingId] = useState<number | null>(null);
+  const [routeLoadingId, setRouteLoadingId] = useState<number | null>(null);
+  const [routes, setRoutes] = useState<Record<number, RouteEstimate>>({});
+  const [routeErrors, setRouteErrors] = useState<Record<number, string>>({});
   const [error, setError] = useState("");
 
   if (!routeState) {
     return <section className="page-empty"><Compass size={28} /><h1>Let's find a stay.</h1><p>Start with your trip details to see quieter places and local homestays.</p><Link className="button button-primary" to="/plan">Plan a trip <ArrowRight size={16} /></Link></section>;
   }
   const state = routeState;
+
+  async function loadRoute(destinationId: number) {
+    setRouteLoadingId(destinationId);
+    setRouteErrors((current) => {
+      const next = { ...current };
+      delete next[destinationId];
+      return next;
+    });
+    try {
+      const route = await getRouteFromHub(destinationId);
+      setRoutes((current) => ({ ...current, [destinationId]: route }));
+    } catch (cause) {
+      setRouteErrors((current) => ({
+        ...current,
+        [destinationId]: cause instanceof Error ? cause.message : "The route estimate could not be loaded.",
+      }));
+    } finally {
+      setRouteLoadingId(null);
+    }
+  }
 
   async function planDays(destinationId: number) {
     setCreatingId(destinationId);
@@ -78,7 +101,7 @@ export function ResultsPage() {
         <section className="empty-results">
           <div className="empty-icon"><MapPin size={23} /></div>
           <h2>No homestays match this search yet.</h2>
-          <p>There are no stays in the current catalogue for these matches. Try another starting place or date.</p>
+          <p>There are no stays in the current catalogue for these matches. Try another date or adjust your interests.</p>
           <Link to="/plan" className="button button-outline">Change your trip <ArrowRight size={16} /></Link>
         </section>
       ) : (
@@ -97,6 +120,38 @@ export function ResultsPage() {
                 </div>
                 <div className="match-estimate"><CrowdBreakdown crowd={item.crowd} animate={index === 0} /></div>
                 <ul className="reason-list">{item.reasons.map((reason) => <li key={reason}>{reason}</li>)}</ul>
+                <section className="route-context" aria-label={`Route context for ${item.destination.name}`}>
+                  {item.destination.name === "Mussoorie" && (
+                    <>
+                      <button
+                        className="button button-outline"
+                        type="button"
+                        disabled={routeLoadingId === item.destination.id}
+                        onClick={() => void loadRoute(item.destination.id)}
+                      >
+                        {routeLoadingId === item.destination.id
+                          ? <><LoaderCircle size={16} className="spin" /> Checking route…</>
+                          : <><Route size={16} /> Driving estimate from Dehradun</>}
+                      </button>
+                      {routes[item.destination.id] && (
+                        <div className="route-context-result" role="status">
+                          <strong>
+                            {(routes[item.destination.id].distance_meters / 1000).toFixed(1)} km
+                            {" · "}
+                            {Math.floor(routes[item.destination.id].duration_seconds / 3600) > 0
+                              ? `${Math.floor(routes[item.destination.id].duration_seconds / 3600)} hr ${Math.round((routes[item.destination.id].duration_seconds % 3600) / 60)} min`
+                              : `${Math.round(routes[item.destination.id].duration_seconds / 60)} min`}
+                            {" · estimated"}
+                          </strong>
+                          <small>{routes[item.destination.id].notes.join(" ")}</small>
+                        </div>
+                      )}
+                      {routeErrors[item.destination.id] && (
+                        <p className="form-error" role="alert">{routeErrors[item.destination.id]}</p>
+                      )}
+                    </>
+                  )}
+                </section>
                 {item.homestays.length ? (
                   <div className="stay-card-list">
                     {item.homestays.map((stay) => (

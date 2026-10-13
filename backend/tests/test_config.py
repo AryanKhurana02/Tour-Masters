@@ -20,6 +20,19 @@ def test_backend_env_file_is_read_but_process_environment_wins(tmp_path: Path) -
     assert "do-not-print" not in repr(settings)
 
 
+def test_ors_key_is_loaded_from_backend_env_and_hidden_from_repr(tmp_path: Path) -> None:
+    env_file = tmp_path / ".env"
+    env_file.write_text(
+        "CORS_ORIGINS=http://localhost:5173\nORS_API_KEY=secret-route-key\n",
+        encoding="utf-8",
+    )
+
+    settings = load_settings({}, env_file)
+
+    assert settings.ors_api_key == "secret-route-key"
+    assert "secret-route-key" not in repr(settings)
+
+
 @pytest.mark.parametrize(
     "origins",
     ["*", "https://user:pass@example.test", "https://example.test/path", "javascript:alert(1)"],

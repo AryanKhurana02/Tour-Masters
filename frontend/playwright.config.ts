@@ -13,6 +13,7 @@ export default defineConfig({
   use: {
     baseURL: process.env.PW_BASE_URL || 'http://127.0.0.1:5173',
     headless: true,
+    channel: 'msedge',
     viewport: { width: 1280, height: 720 },
     actionTimeout: 5000,
     ignoreHTTPSErrors: true

@@ -3,3 +3,6 @@ pydantic>=2.10,<3
 slowapi>=0.1.9,<1
 uvicorn>=0.34,<1
 pytest>=8,<9
+openmeteo-requests>=1.2,<2
+requests-cache>=1.2,<2
+retry-requests>=2.0,<3

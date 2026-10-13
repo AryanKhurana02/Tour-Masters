@@ -31,9 +31,9 @@ export function HomePage() {
         <div className="planner-aside">
           <span className="eyebrow">Stay somewhere quieter</span>
           <h2>Start with your trip.<br />Find a local stay.</h2>
-          <p>Choose a place, dates and interests. We’ll show quieter matches and the stays listed for them.</p>
+          <p>Choose dates and interests. We’ll compare quieter places across Uttarakhand and show any stays listed for them.</p>
           <div className="step-list">
-            <div><span>01</span><p><strong>Choose your dates</strong><small>Keep the trip form you already know.</small></p></div>
+            <div><span>01</span><p><strong>Shape your trip</strong><small>Choose dates, trip length and interests.</small></p></div>
             <div><span>02</span><p><strong>Compare local stays</strong><small>See backend-ranked quieter matches.</small></p></div>
             <div><span>03</span><p><strong>Send a demo request</strong><small>Sample inventory is not a reservation.</small></p></div>
           </div>

@@ -17,6 +17,7 @@ class Settings:
     enable_llm: bool
     llm_api_key: str | None = field(default=None, repr=False)
     llm_model: str | None = None
+    ors_api_key: str | None = field(default=None, repr=False)
 
     def __post_init__(self) -> None:
         if not self.cors_origins:
@@ -83,4 +84,5 @@ def load_settings(
         enable_llm=raw_llm_enabled == "true",
         llm_api_key=values.get("LLM_API_KEY") or None,
         llm_model=values.get("LLM_MODEL") or None,
+        ors_api_key=values.get("ORS_API_KEY") or None,
     )

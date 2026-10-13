@@ -6,6 +6,7 @@ from datetime import date
 from pathlib import Path
 from typing import Any
 from urllib.parse import urlparse
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from app.db.database import connect_database, initialize_database
 from app.config import load_settings
@@ -37,6 +38,10 @@ DATA_FILES: dict[str, tuple[str, ...]] = {
     "event_calendar_reviews": (
         "id", "region", "starts_on", "ends_on", "source_label", "source_url", "reviewer",
         "reviewed_at", "enabled",
+    ),
+    "weather_locations": (
+        "id", "destination_id", "latitude", "longitude", "elevation_m", "timezone",
+        "source_label", "source_url", "reviewer", "reviewed_at", "enabled",
     ),
 }
 
@@ -76,6 +81,30 @@ def _flag(row: dict[str, str], name: str, file_path: Path, row_number: int) -> i
     value = _integer(row, name, file_path, row_number, minimum=0, maximum=1)
     if value is None:
         raise ValueError(f"{file_path.name}:{row_number}: {name} is required.")
+    return value
+
+
+def _coordinate(
+    row: dict[str, str],
+    name: str,
+    file_path: Path,
+    row_number: int,
+    *,
+    minimum: float,
+    maximum: float,
+    optional: bool = False,
+) -> float | None:
+    raw = row.get(name, "").strip()
+    if not raw and optional:
+        return None
+    try:
+        value = float(raw)
+    except ValueError as error:
+        raise ValueError(f"{file_path.name}:{row_number}: {name} must be numeric.") from error
+    if not minimum <= value <= maximum:
+        raise ValueError(
+            f"{file_path.name}:{row_number}: {name} must be between {minimum} and {maximum}."
+        )
     return value
 
 
@@ -227,6 +256,40 @@ def _record(table: str, row: dict[str, str], file_path: Path, row_number: int) -
             start,
             end,
             pressure,
+            *provenance,
+            _flag(row, "enabled", file_path, row_number),
+        )
+
+    if table == "weather_locations":
+        _required(row, "source_url", file_path, row_number)
+        destination_id = _integer(row, "destination_id", file_path, row_number, minimum=1)
+        latitude = _coordinate(
+            row, "latitude", file_path, row_number, minimum=-90, maximum=90
+        )
+        longitude = _coordinate(
+            row, "longitude", file_path, row_number, minimum=-180, maximum=180
+        )
+        elevation = _coordinate(
+            row,
+            "elevation_m",
+            file_path,
+            row_number,
+            minimum=-500,
+            maximum=9000,
+            optional=True,
+        )
+        timezone = _required(row, "timezone", file_path, row_number)
+        try:
+            ZoneInfo(timezone)
+        except ZoneInfoNotFoundError as error:
+            raise ValueError(f"{file_path.name}:{row_number}: timezone is not recognized.") from error
+        return (
+            record_id,
+            destination_id,
+            latitude,
+            longitude,
+            elevation,
+            timezone,
             *provenance,
             _flag(row, "enabled", file_path, row_number),
         )

@@ -1,0 +1,46 @@
+holiday,year,date,crowded_destinations,quieter_destinations,provenance_status
+Republic Day,2022,2022-01-26,Mussoorie;Auli;Rishikesh,Chopta;Khirsu;Munsiyari,user_supplied_unverified
+Republic Day,2023,2023-01-26,Mussoorie;Auli;Rishikesh,Chopta;Khirsu;Munsiyari,user_supplied_unverified
+Republic Day,2024,2024-01-26,Mussoorie;Auli;Rishikesh,Chopta;Khirsu;Munsiyari,user_supplied_unverified
+Republic Day,2025,2025-01-26,Mussoorie;Auli;Rishikesh,Chopta;Khirsu;Munsiyari,user_supplied_unverified
+Republic Day,2026,2026-01-26,Mussoorie;Auli;Rishikesh,Chopta;Khirsu;Munsiyari,user_supplied_unverified
+Maha Shivratri,2022,2022-03-01,Haridwar;Rishikesh;Neelkanth Mahadev,Binsar;Kausani;Lansdowne,user_supplied_unverified
+Maha Shivratri,2023,2023-02-18,Haridwar;Rishikesh;Neelkanth Mahadev,Binsar;Kausani;Lansdowne,user_supplied_unverified
+Maha Shivratri,2024,2024-03-08,Haridwar;Rishikesh;Neelkanth Mahadev,Binsar;Kausani;Lansdowne,user_supplied_unverified
+Maha Shivratri,2025,2025-02-26,Haridwar;Rishikesh;Neelkanth Mahadev,Binsar;Kausani;Lansdowne,user_supplied_unverified
+Maha Shivratri,2026,2026-02-14,Haridwar;Rishikesh;Neelkanth Mahadev,Binsar;Kausani;Lansdowne,user_supplied_unverified
+Holi,2022,2022-03-18,Nainital;Mussoorie;Dehradun,Pangot;Mukteshwar;Kanatal,user_supplied_unverified
+Holi,2023,2023-03-08,Nainital;Mussoorie;Dehradun,Pangot;Mukteshwar;Kanatal,user_supplied_unverified
+Holi,2024,2024-03-25,Nainital;Mussoorie;Dehradun,Pangot;Mukteshwar;Kanatal,user_supplied_unverified
+Holi,2025,2025-03-14,Nainital;Mussoorie;Dehradun,Pangot;Mukteshwar;Kanatal,user_supplied_unverified
+Holi,2026,2026-03-03,Nainital;Mussoorie;Dehradun,Pangot;Mukteshwar;Kanatal,user_supplied_unverified
+Good Friday,2022,2022-04-15,Rishikesh;Nainital;Jim Corbett National Park,Sattal;Naukuchiatal;Ranikhet,user_supplied_unverified
+Good Friday,2023,2023-04-07,Rishikesh;Nainital;Jim Corbett National Park,Sattal;Naukuchiatal;Ranikhet,user_supplied_unverified
+Good Friday,2024,2024-03-29,Rishikesh;Nainital;Jim Corbett National Park,Sattal;Naukuchiatal;Ranikhet,user_supplied_unverified
+Good Friday,2025,2025-04-18,Rishikesh;Nainital;Jim Corbett National Park,Sattal;Naukuchiatal;Ranikhet,user_supplied_unverified
+Good Friday,2026,2026-04-02,Rishikesh;Nainital;Jim Corbett National Park,Sattal;Naukuchiatal;Ranikhet,user_supplied_unverified
+Buddha Purnima,2022,2022-05-16,Kedarnath;Badrinath;Nainital;Mussoorie,Chakrata;Harsil;Pithoragarh,user_supplied_unverified
+Buddha Purnima,2023,2023-05-05,Kedarnath;Badrinath;Nainital;Mussoorie,Chakrata;Harsil;Pithoragarh,user_supplied_unverified
+Buddha Purnima,2024,2024-05-23,Kedarnath;Badrinath;Nainital;Mussoorie,Chakrata;Harsil;Pithoragarh,user_supplied_unverified
+Buddha Purnima,2025,2025-05-12,Kedarnath;Badrinath;Nainital;Mussoorie,Chakrata;Harsil;Pithoragarh,user_supplied_unverified
+Buddha Purnima,2026,2026-04-30,Kedarnath;Badrinath;Nainital;Mussoorie,Chakrata;Harsil;Pithoragarh,user_supplied_unverified
+Independence Day,2022,2022-08-15,Mussoorie Mall Road;Nainital Lake;Rishikesh Ghats,Dhanaulti;Bhimtal;Ramgarh,user_supplied_unverified
+Independence Day,2023,2023-08-15,Mussoorie Mall Road;Nainital Lake;Rishikesh Ghats,Dhanaulti;Bhimtal;Ramgarh,user_supplied_unverified
+Independence Day,2024,2024-08-15,Mussoorie Mall Road;Nainital Lake;Rishikesh Ghats,Dhanaulti;Bhimtal;Ramgarh,user_supplied_unverified
+Independence Day,2025,2025-08-15,Mussoorie Mall Road;Nainital Lake;Rishikesh Ghats,Dhanaulti;Bhimtal;Ramgarh,user_supplied_unverified
+Independence Day,2026,2026-08-15,Mussoorie Mall Road;Nainital Lake;Rishikesh Ghats,Dhanaulti;Bhimtal;Ramgarh,user_supplied_unverified
+Gandhi Jayanti,2022,2022-10-02,Jim Corbett;Rishikesh Adventure Camps;Mussoorie,Jeolikote;Landour (Inner areas);Mori,user_supplied_unverified
+Gandhi Jayanti,2023,2023-10-02,Jim Corbett;Rishikesh Adventure Camps;Mussoorie,Jeolikote;Landour (Inner areas);Mori,user_supplied_unverified
+Gandhi Jayanti,2024,2024-10-02,Jim Corbett;Rishikesh Adventure Camps;Mussoorie,Jeolikote;Landour (Inner areas);Mori,user_supplied_unverified
+Gandhi Jayanti,2025,2025-10-02,Jim Corbett;Rishikesh Adventure Camps;Mussoorie,Jeolikote;Landour (Inner areas);Mori,user_supplied_unverified
+Gandhi Jayanti,2026,2026-10-02,Jim Corbett;Rishikesh Adventure Camps;Mussoorie,Jeolikote;Landour (Inner areas);Mori,user_supplied_unverified
+Diwali,2022,2022-10-24,Haridwar;Rishikesh;Nainital;Dehradun City,Jageshwar;Lohaghat;Abbott Mount,user_supplied_unverified
+Diwali,2023,2023-11-12,Haridwar;Rishikesh;Nainital;Dehradun City,Jageshwar;Lohaghat;Abbott Mount,user_supplied_unverified
+Diwali,2024,2024-10-31,Haridwar;Rishikesh;Nainital;Dehradun City,Jageshwar;Lohaghat;Abbott Mount,user_supplied_unverified
+Diwali,2025,2025-10-20,Haridwar;Rishikesh;Nainital;Dehradun City,Jageshwar;Lohaghat;Abbott Mount,user_supplied_unverified
+Diwali,2026,2026-11-07,Haridwar;Rishikesh;Nainital;Dehradun City,Jageshwar;Lohaghat;Abbott Mount,user_supplied_unverified
+Christmas Day,2022,2022-12-25,Mussoorie;Nainital;Auli;Rishikesh,Pauri;Almora;Chaukori,user_supplied_unverified
+Christmas Day,2023,2023-12-25,Mussoorie;Nainital;Auli;Rishikesh,Pauri;Almora;Chaukori,user_supplied_unverified
+Christmas Day,2024,2024-12-25,Mussoorie;Nainital;Auli;Rishikesh,Pauri;Almora;Chaukori,user_supplied_unverified
+Christmas Day,2025,2025-12-25,Mussoorie;Nainital;Auli;Rishikesh,Pauri;Almora;Chaukori,user_supplied_unverified
+Christmas Day,2026,2026-12-25,Mussoorie;Nainital;Auli;Rishikesh,Pauri;Almora;Chaukori,user_supplied_unverified

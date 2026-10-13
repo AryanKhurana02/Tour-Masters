@@ -12,6 +12,7 @@ from app.integrations.llm_client import (
     parse_text_only_response,
 )
 from app.repositories.destination_repository import get_event_pressure
+from app.repositories.weather_repository import get_weather_visit_tendency
 from app.schemas.itinerary import ItineraryRequest
 from app.services.crowd_score import estimate_crowd
 from app.services.itinerary_validation import validate_itinerary_selection
@@ -61,7 +62,17 @@ def build_itinerary(
             destination_id=destination["id"],
             target_date=target_date,
         )
-        crowd = estimate_crowd(destination, target_date, event_pressure)
+        weather_signal = get_weather_visit_tendency(
+            connection,
+            destination_id=destination["id"],
+            target_date=target_date,
+        )
+        crowd = estimate_crowd(
+            destination,
+            target_date,
+            event_pressure,
+            weather_signal,
+        )
         template_texts = [
             f"Keep this {period} flexible and explore at your own pace."
             for period in _PERIODS

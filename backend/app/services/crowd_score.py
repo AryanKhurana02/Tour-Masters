@@ -27,6 +27,7 @@ def estimate_crowd(
     destination: dict[str, Any],
     target_date: date,
     event_pressure: int | None,
+    weather_signal: dict[str, int | str] | None = None,
 ) -> dict[str, Any]:
     notes: list[str] = []
     popularity = destination["popularity_score"]
@@ -43,8 +44,12 @@ def estimate_crowd(
         event_pressure = 50
         notes.append("Event information was not reviewed for this date; neutral 50 was used.")
 
-    weather_visit_tendency = 50
-    notes.append("Weather visit-tendency data is unavailable; neutral 50 was used.")
+    if weather_signal is None:
+        weather_visit_tendency = 50
+        notes.append("Weather visit-tendency data is unavailable; neutral 50 was used.")
+    else:
+        weather_visit_tendency = int(weather_signal["value"])
+        notes.append(str(weather_signal["note"]))
 
     components = {
         "popularity": popularity,

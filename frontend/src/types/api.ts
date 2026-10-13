@@ -137,6 +137,18 @@ export interface RecommendationResponse {
   warnings: string[];
 }
 
+export interface RouteEstimate {
+  destination_id: number;
+  origin_label: "Dehradun hub";
+  destination_name: string;
+  distance_meters: number;
+  duration_seconds: number;
+  estimated: true;
+  source: "OpenRouteService";
+  retrieved_at: string;
+  notes: string[];
+}
+
 export interface ItineraryBlock {
   period: "morning" | "afternoon" | "evening";
   text: string;

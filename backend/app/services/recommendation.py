@@ -8,6 +8,7 @@ from app.repositories.destination_repository import (
     get_recommendation_candidates,
     list_homestays,
 )
+from app.repositories.weather_repository import get_weather_visit_tendency
 from app.schemas.recommendation import RecommendationRequest
 from app.services.crowd_score import estimate_crowd
 
@@ -94,7 +95,17 @@ def recommend(
             destination_id=destination["id"],
             target_date=request.start_date,
         )
-        crowd = estimate_crowd(destination, request.start_date, event_pressure)
+        weather_signal = get_weather_visit_tendency(
+            connection,
+            destination_id=destination["id"],
+            target_date=request.start_date,
+        )
+        crowd = estimate_crowd(
+            destination,
+            request.start_date,
+            event_pressure,
+            weather_signal,
+        )
         stays = list_homestays(connection, destination["id"])
         interest, interest_reason = _interest_fit(
             request.interests, destination["tags"], destination["link_tags"]

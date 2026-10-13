@@ -21,6 +21,8 @@ The available workspace interpreter used during validation was Python 3.12.10. P
 
 The backend reads only `backend/.env` plus process environment variables, with process environment taking precedence. Relative `DATABASE_PATH` values are resolved under `backend/`. Keep credentials in this file; never use a `VITE_*` secret. CORS accepts explicit origins only; the example origin is the local Vite dev server. LLM text generation defaults off.
 
+Two optional backend maintenance commands read their inputs from SQLite and never from the frontend. From `backend/`, `python -m scripts.refresh_weather` fills the weather visit-tendency input from Open-Meteo (archive climatology plus the current forecast) after the catalogue has been seeded; run it on a schedule such as every three hours, keep `data/weather_locations.csv` rows reviewed before enabling them, and check `GET /api/data-sources` for status. `python -m scripts.evaluate_crowd` compares current estimates with the qualitative fixture in `data/validation/` and reports coverage and concordance only; it is a diagnostic, not a ground-truth measurement.
+
 `python -m app.db.seed` initializes the versioned SQLite schema and transactionally upserts the CSV rows by stable integer ID. The current templates are empty by design, so the catalogue and recommendation APIs return no invented places until records are reviewed and added. See [data/README.md](./data/README.md) for fields, provenance and consent requirements. Invalid headers, ranges, references, dates, duplicate IDs or missing provenance fail the import; corrections must be made in the CSVs.
 
 ## API surface
@@ -33,6 +35,8 @@ The backend reads only `backend/.env` plus process environment variables, with p
 - `POST /api/itineraries`
 - `GET /api/homestays/{id}/inventory?check_in=&check_out=`
 - `POST /api/booking-requests` (creates a non-binding demo request only)
+- `GET /api/data-sources` (refresh status and retrieval timestamps for the weather sources)
+- `GET /api/destinations/{id}/route-from-hub` (Mussoorie case study only; requires `ORS_API_KEY`, rate-limited to 5/minute)
 
 Errors use an `error` object with stable code, generic or safe message, and request ID. Pydantic validation errors do not echo rejected input. Requests return `X-Request-ID`; request logs include method, status, duration and correlation ID, not request bodies. Recommendation and itinerary endpoints use process-local SlowAPI limits of 30/minute and 10/minute; use a shared gateway/limiter before multi-worker deployment.
 

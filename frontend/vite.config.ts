@@ -2,6 +2,9 @@ import { defineConfig } from "vitest/config";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
+  test: {
+    exclude: ["**/node_modules/**", "**/dist/**", "**/tests/e2e/**"],
+  },
   esbuild: {
     jsx: "automatic",
   },

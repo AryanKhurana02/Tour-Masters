@@ -2,12 +2,15 @@ from __future__ import annotations
 
 import csv
 import sqlite3
+from datetime import date
 from pathlib import Path
 
 import pytest
 
-from app.db.database import connect_database
+from app.db.database import SCHEMA_VERSION, connect_database
 from app.db.seed import DATA_FILES, seed_database
+from app.repositories.destination_repository import list_destinations
+from app.services.crowd_score import estimate_crowd
 
 
 def _write_csv(directory: Path, table: str, rows: list[dict[str, str]]) -> None:
@@ -157,13 +160,34 @@ def test_database_connections_enable_foreign_keys(tmp_path: Path) -> None:
             )
 
 
+def test_mussoorie_case_stays_unknown_until_inputs_are_verified(tmp_path: Path) -> None:
+    data_directory = Path(__file__).resolve().parents[2] / "data"
+    database_path = tmp_path / "catalogue.db"
+    seed_database(database_path, data_directory)
+
+    with connect_database(database_path) as connection:
+        mussoorie = next(
+            destination
+            for destination in list_destinations(connection)
+            if destination["name"] == "Mussoorie"
+        )
+        estimate = estimate_crowd(mussoorie, date(2026, 10, 20), event_pressure=None)
+
+    assert mussoorie["source_url"] == "https://uttarakhandtourism.gov.in/destination/mussoorie"
+    assert mussoorie["popularity_score"] is None
+    assert mussoorie["best_months"] == []
+    assert estimate["score"] == 50
+    assert estimate["level"] == "Moderate"
+    assert len(estimate["notes"]) == 4
+
+
 def test_schema_version_is_recorded_and_future_versions_are_rejected(tmp_path: Path) -> None:
     database = tmp_path / "catalogue.db"
     _seed_files(tmp_path / "data")
     seed_database(database, tmp_path / "data")
 
     with connect_database(database) as connection:
-        assert connection.execute("PRAGMA user_version").fetchone()[0] == 2
+        assert connection.execute("PRAGMA user_version").fetchone()[0] == SCHEMA_VERSION
         connection.execute("PRAGMA user_version = 99")
 
     with pytest.raises(RuntimeError, match="newer than supported"):

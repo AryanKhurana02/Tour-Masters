@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 import { CrowdDial } from "./CrowdDial";
-import { getDestinations, getRecommendations } from "../services/api";
+import { Card } from "./ui/Card";
+import { getRecommendations } from "../services/api";
 import type { RecommendationItem } from "../types/api";
 
 function dateInAWeek(): string {
@@ -23,12 +24,8 @@ export function LandingStayExample() {
     let active = true;
     async function loadExample() {
       try {
-        const destinations = await getDestinations();
-        const origin = destinations[0];
-        if (!origin) return;
         const response = await getRecommendations({
-          region: origin.region,
-          start_destination_id: origin.id,
+          region: "Uttarakhand",
           start_date: dateInAWeek(),
           days: 1,
           interests: [],
@@ -52,7 +49,7 @@ export function LandingStayExample() {
   return (
     <aside className="hero-art landing-example" aria-label="Example homestay from the catalogue">
       <div className="example-art-contours" aria-hidden="true" />
-      <div className="landing-example-card">
+      <Card className="landing-example-card">
         <div className="hero-art-label"><span>Example</span><BedDouble size={16} /></div>
         {loading ? (
           <p className="example-loading">Looking for a sample stay…</p>
@@ -76,7 +73,7 @@ export function LandingStayExample() {
             <Link className="button button-primary" to="/plan">Plan a trip <ArrowRight size={16} /></Link>
           </>
         )}
-      </div>
+      </Card>
     </aside>
   );
 }

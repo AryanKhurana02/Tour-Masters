@@ -31,6 +31,16 @@ def test_recommendation_api_returns_backend_scores_and_provenance(test_client: T
     assert item["crowd"]["reviewed_at"] == "2026-09-15"
 
 
+def test_recommendations_without_start_place_search_region_wide(test_client: TestClient) -> None:
+    payload = _request(avoid_crowds=False)
+    payload.pop("start_destination_id")
+
+    response = test_client.post("/api/recommendations", json=payload)
+
+    assert response.status_code == 200
+    assert {item["destination"]["id"] for item in response.json()["items"]} == {1, 2, 3, 4}
+
+
 def test_recommendation_validation_does_not_echo_input_values(test_client: TestClient) -> None:
     response = test_client.post(
         "/api/recommendations",

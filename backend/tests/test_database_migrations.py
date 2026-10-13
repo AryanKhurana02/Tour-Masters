@@ -8,7 +8,7 @@ import pytest
 from app.db.database import SCHEMA_PATH, connect_database, initialize_database
 
 
-def test_schema_v1_migrates_additively_to_v2(tmp_path: Path) -> None:
+def test_schema_v1_migrates_additively_to_v3(tmp_path: Path) -> None:
     database = tmp_path / "legacy.db"
     with sqlite3.connect(database) as connection:
         connection.execute("PRAGMA foreign_keys = ON")
@@ -30,7 +30,7 @@ def test_schema_v1_migrates_additively_to_v2(tmp_path: Path) -> None:
     initialize_database(database)
 
     with sqlite3.connect(database) as connection:
-        assert connection.execute("PRAGMA user_version").fetchone()[0] == 2
+        assert connection.execute("PRAGMA user_version").fetchone()[0] == 3
         assert connection.execute("SELECT name FROM destinations WHERE id = 1").fetchone() == (
             "Existing place",
         )
@@ -43,7 +43,14 @@ def test_schema_v1_migrates_additively_to_v2(tmp_path: Path) -> None:
                 "SELECT name FROM sqlite_master WHERE type = 'table'"
             )
         }
-        assert {"homestay_inventory", "booking_requests"} <= tables
+        assert {
+            "homestay_inventory",
+            "booking_requests",
+            "weather_locations",
+            "weather_climatology",
+            "weather_forecasts",
+            "data_source_refreshes",
+        } <= tables
 
 
 def test_fresh_database_applies_all_migrations(tmp_path: Path) -> None:
@@ -52,7 +59,7 @@ def test_fresh_database_applies_all_migrations(tmp_path: Path) -> None:
     initialize_database(database)
 
     with connect_database(database) as connection:
-        assert connection.execute("PRAGMA user_version").fetchone()[0] == 2
+        assert connection.execute("PRAGMA user_version").fetchone()[0] == 3
         with pytest.raises(sqlite3.IntegrityError):
             with connection:
                 connection.execute(
