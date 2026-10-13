@@ -1,0 +1,84 @@
+# Spec-to-Plan Traceability Checkpoint
+metadata:
+  generated: "2026-10-12"
+  source_spec: "User brief + PahadPath_Low_Level_Design.docx (standalone spec absent)"
+  target_plan: "plan.md"
+summary:
+  total_requirements: 13
+  covered_requirements: 13
+  missing_requirements: 0
+  coverage_percentage: 100.0
+requirements:
+  - req_id: "REQ-001"
+    req_description: "Curated destination catalogue and provenance"
+    priority: "P1"
+    plan_mapping: {phase: "Phase-2", phase_name: "Foundational contracts and data", items: [{item_id: "2.1", description: "Curated data and persistence"}, {item_id: "3.1", description: "Serve catalogue records"}, {item_id: "7.2", description: "Demo handoff"}]}
+    notes: "Only reviewed real facts may be seeded."
+  - req_id: "REQ-002"
+    req_description: "Backend-owned weighted crowd estimate and components"
+    priority: "P1"
+    plan_mapping: {phase: "Phase-3", phase_name: "Find estimated quieter alternatives", items: [{item_id: "2.2", description: "API contracts"}, {item_id: "3.2", description: "Crowd estimates"}, {item_id: "3.3", description: "Ranking"}, {item_id: "5.2", description: "Display estimates"}, {item_id: "7.1", description: "End-to-end validation"}]}
+    notes: "Exact weights tested in backend."
+  - req_id: "REQ-003"
+    req_description: "Correct bands, estimated wording, neutral missing notes, mode and review date"
+    priority: "P1"
+    plan_mapping: {phase: "Phase-3", phase_name: "Find estimated quieter alternatives", items: [{item_id: "3.2", description: "Crowd estimates"}, {item_id: "5.2", description: "Display estimates"}, {item_id: "7.1", description: "End-to-end validation"}]}
+    notes: "Show word and number; not color alone."
+  - req_id: "REQ-004"
+    req_description: "Backend rank applies prescribed weighted formula"
+    priority: "P1"
+    plan_mapping: {phase: "Phase-3", phase_name: "Find estimated quieter alternatives", items: [{item_id: "3.3", description: "Rank alternatives"}]}
+    notes: "Bound each component."
+  - req_id: "REQ-005"
+    req_description: "Known quieter look-alikes with reasons and explicit relaxed filters"
+    priority: "P1"
+    plan_mapping: {phase: "Phase-3", phase_name: "Find estimated quieter alternatives", items: [{item_id: "3.1", description: "Catalogue"}, {item_id: "3.3", description: "Ranking"}, {item_id: "5.2", description: "Results display"}]}
+    notes: "Tag overlap, not embeddings."
+  - req_id: "REQ-006"
+    req_description: "Curated stays only; unknown facts are not invented"
+    priority: "P1"
+    plan_mapping: {phase: "Phase-2", phase_name: "Foundational contracts and data", items: [{item_id: "2.1", description: "Data schema"}, {item_id: "3.1", description: "Stay API"}, {item_id: "5.2", description: "Stay UI"}]}
+    notes: "Public contacts need consent."
+  - req_id: "REQ-007"
+    req_description: "Itinerary validates IDs, dates, day count and budget"
+    priority: "P1"
+    plan_mapping: {phase: "Phase-4", phase_name: "Generate a valid itinerary", items: [{item_id: "2.2", description: "Contracts"}, {item_id: "4.1", description: "Template and validation"}, {item_id: "5.3", description: "Itinerary UI"}]}
+    notes: ""
+  - req_id: "REQ-008"
+    req_description: "Optional text-only LLM, validation and deterministic fallback"
+    priority: "P1"
+    plan_mapping: {phase: "Phase-4", phase_name: "Generate a valid itinerary", items: [{item_id: "4.1", description: "Deterministic baseline"}, {item_id: "4.2", description: "Optional adapter"}, {item_id: "5.3", description: "Mode label"}]}
+    notes: "Provider SDK requires approval."
+  - req_id: "REQ-009"
+    req_description: "Explicit save and offline reopen of plan and essential referenced data"
+    priority: "P1"
+    plan_mapping: {phase: "Phase-6", phase_name: "Save and reopen offline", items: [{item_id: "6.1", description: "PWA shell and persistence"}, {item_id: "6.2", description: "Saved trip UI"}, {item_id: "7.1", description: "Offline acceptance"}]}
+    notes: "Do not silently overwrite snapshot."
+  - req_id: "REQ-010"
+    req_description: "PWA app shell and honest offline scope"
+    priority: "P1"
+    plan_mapping: {phase: "Phase-5/6", phase_name: "Frontend and offline", items: [{item_id: "5.1", description: "Frontend foundation"}, {item_id: "6.1", description: "PWA shell"}]}
+    notes: "No offline maps."
+  - req_id: "REQ-011"
+    req_description: "Topographic Dawn responsive accessible UI and motion constraints"
+    priority: "P1"
+    plan_mapping: {phase: "Phase-5", phase_name: "Mobile-first UI", items: [{item_id: "5.1", description: "Tokens and request flow"}, {item_id: "5.2", description: "Results UI"}, {item_id: "5.3", description: "Itinerary UI"}, {item_id: "7.1", description: "Acceptance checks"}]}
+    notes: ""
+  - req_id: "REQ-012"
+    req_description: "Backend-only secrets, input validation, CORS/rate limits and privacy"
+    priority: "P1"
+    plan_mapping: {phase: "Phase-1/2/7", phase_name: "Setup, foundations and hardening", items: [{item_id: "1.1", description: "Project setup"}, {item_id: "2.2", description: "Configuration and API"}, {item_id: "7.1", description: "Security verification"}]}
+    notes: ""
+  - req_id: "REQ-013"
+    req_description: "Approved stack, executable checks and reproducible demo guidance"
+    priority: "P1"
+    plan_mapping: {phase: "Phase-1/2/7", phase_name: "Setup, foundations and handoff", items: [{item_id: "1.1", description: "Scaffold"}, {item_id: "2.2", description: "Contracts"}, {item_id: "7.1", description: "Tests"}, {item_id: "7.2", description: "README/demo"}]}
+    notes: "ASGI server approval is an explicit run gate."
+missing_requirements: []
+orphan_plan_items: []
+validation:
+  passed: true
+  errors: []
+  warnings:
+    - "Workspace has no standalone spec, constitution or project-topology file; IDs are normalized from the brief and supplied design."
+    - "Verified destination/stay data must be supplied before a truthful demo."

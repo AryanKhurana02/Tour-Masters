@@ -1,0 +1,10 @@
+id,homestay_id,inventory_date,total_units,available_units,inventory_mode,source_label,source_url,reviewer,reviewed_at,enabled
+1,1,2026-11-07,2,2,demo_mock,DEMO MOCK INVENTORY - NOT REAL,,PahadPath demo fixture,2026-10-13,1
+2,1,2026-11-08,2,1,demo_mock,DEMO MOCK INVENTORY - NOT REAL,,PahadPath demo fixture,2026-10-13,1
+3,1,2026-11-09,2,2,demo_mock,DEMO MOCK INVENTORY - NOT REAL,,PahadPath demo fixture,2026-10-13,1
+4,2,2026-11-07,1,1,demo_mock,DEMO MOCK INVENTORY - NOT REAL,,PahadPath demo fixture,2026-10-13,1
+5,2,2026-11-08,1,0,demo_mock,DEMO MOCK INVENTORY - NOT REAL,,PahadPath demo fixture,2026-10-13,1
+6,2,2026-11-09,1,1,demo_mock,DEMO MOCK INVENTORY - NOT REAL,,PahadPath demo fixture,2026-10-13,1
+7,3,2026-11-07,3,2,demo_mock,DEMO MOCK INVENTORY - NOT REAL,,PahadPath demo fixture,2026-10-13,1
+8,3,2026-11-08,3,2,demo_mock,DEMO MOCK INVENTORY - NOT REAL,,PahadPath demo fixture,2026-10-13,1
+9,3,2026-11-09,3,2,demo_mock,DEMO MOCK INVENTORY - NOT REAL,,PahadPath demo fixture,2026-10-13,1

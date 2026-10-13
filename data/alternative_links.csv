@@ -1,0 +1,4 @@
+id,source_destination_id,alternative_destination_id,match_tags,travel_fit,source_label,source_url,reviewer,reviewed_at,enabled
+1,1,2,nature;slow-travel,,DEMO FIXTURE - NOT VERIFIED,,PahadPath demo fixture,2026-10-13,1
+2,1,3,nature;views,,DEMO FIXTURE - NOT VERIFIED,,PahadPath demo fixture,2026-10-13,1
+3,1,4,quiet;slow-travel,,DEMO FIXTURE - NOT VERIFIED,,PahadPath demo fixture,2026-10-13,1

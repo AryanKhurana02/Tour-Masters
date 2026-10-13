@@ -1,0 +1,4 @@
+id,destination_id,name,village,nightly_min,nightly_max,currency,public_contact,booking_url,publish_contact,amenities,source_label,source_url,reviewer,reviewed_at,enabled
+1,2,Demo stay - not a real listing,, ,,,,,0,,DEMO FIXTURE - NOT VERIFIED,,PahadPath demo fixture,2026-10-13,1
+2,3,Demo stay - not a real listing,, ,,,,,0,,DEMO FIXTURE - NOT VERIFIED,,PahadPath demo fixture,2026-10-13,1
+3,4,Demo stay - not a real listing,, ,,,,,0,,DEMO FIXTURE - NOT VERIFIED,,PahadPath demo fixture,2026-10-13,1

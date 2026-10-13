@@ -1,0 +1,133 @@
+# Plan-to-Tasks Traceability Checkpoint
+metadata:
+  generated: "2026-10-12"
+  source_plan: "plan.md"
+  target_tasks: "plan.md (inline checklist)"
+summary:
+  total_plan_items: 14
+  covered_plan_items: 14
+  missing_plan_items: 0
+  coverage_percentage: 100.0
+  total_tasks_generated: 53
+  orphan_tasks: 0
+phases:
+  - phase_id: "Phase-1"
+    phase_name: "Setup"
+    items:
+      - item_id: "1.1"
+        description: "Establish the approved monorepo skeleton"
+        tasks: [{task_id: "T001", description: "Create structure"}, {task_id: "T002", description: "Frontend manifest/config"}, {task_id: "T003", description: "Backend manifest/entry"}, {task_id: "T004", description: "Ignore/env example"}]
+  - phase_id: "Phase-2"
+    phase_name: "Foundational contracts and data"
+    items:
+      - item_id: "2.1"
+        description: "Define validated curated data and persistence"
+        tasks: [{task_id: "T005", description: "SQLite schema"}, {task_id: "T006", description: "Database lifecycle"}, {task_id: "T007", description: "Seed templates"}, {task_id: "T008", description: "Validated seed loader"}, {task_id: "T009", description: "Seed tests"}]
+      - item_id: "2.2"
+        description: "Freeze API shapes, configuration and errors"
+        tasks: [{task_id: "T010", description: "Pydantic models"}, {task_id: "T011", description: "Backend config"}, {task_id: "T012", description: "Errors, routes and CORS"}, {task_id: "T013", description: "Rate limits"}]
+  - phase_id: "Phase-3"
+    phase_name: "US1 Find estimated quieter alternatives"
+    items:
+      - item_id: "3.1"
+        description: "Serve curated catalogue records"
+        tasks: [{task_id: "T014", description: "Repository"}, {task_id: "T015", description: "Catalogue/stay endpoints"}, {task_id: "T016", description: "Catalogue API tests"}, {task_id: "T022", description: "Recommendation endpoint"}, {task_id: "T023", description: "Recommendation API tests"}]
+      - item_id: "3.2"
+        description: "Calculate transparent crowd estimates"
+        tasks: [{task_id: "T017", description: "Crowd service"}, {task_id: "T018", description: "Crowd tests"}, {task_id: "T019", description: "Date demand"}, {task_id: "T022", description: "Recommendation endpoint"}, {task_id: "T023", description: "API tests"}]
+      - item_id: "3.3"
+        description: "Rank alternatives on the backend"
+        tasks: [{task_id: "T020", description: "Ranking service"}, {task_id: "T021", description: "Ranking tests"}, {task_id: "T022", description: "Recommendation endpoint"}, {task_id: "T023", description: "API tests"}]
+  - phase_id: "Phase-4"
+    phase_name: "US2 Generate a valid itinerary"
+    items:
+      - item_id: "4.1"
+        description: "Build and validate deterministic itinerary first"
+        tasks: [{task_id: "T024", description: "Validator"}, {task_id: "T025", description: "Template service"}, {task_id: "T026", description: "Itinerary tests"}, {task_id: "T027", description: "Itinerary endpoint"}]
+      - item_id: "4.2"
+        description: "Optional text generation behind validated fallback"
+        tasks: [{task_id: "T028", description: "Gated text adapter"}, {task_id: "T029", description: "Validate and fall back"}, {task_id: "T030", description: "Failure tests"}]
+  - phase_id: "Phase-5"
+    phase_name: "US3 Complete mobile-first UI"
+    items:
+      - item_id: "5.1"
+        description: "Shared types, tokens and request flow"
+        tasks: [{task_id: "T031", description: "Frontend types"}, {task_id: "T032", description: "Design tokens"}, {task_id: "T033", description: "API client"}, {task_id: "T034", description: "Request form"}, {task_id: "T035", description: "Router"}]
+      - item_id: "5.2"
+        description: "Render recommendations, estimates and stays"
+        tasks: [{task_id: "T036", description: "Crowd breakdown"}, {task_id: "T037", description: "Cards"}, {task_id: "T038", description: "Results/detail page"}, {task_id: "T039", description: "UI tests"}]
+      - item_id: "5.3"
+        description: "Render itinerary and recoverable errors"
+        tasks: [{task_id: "T040", description: "Itinerary view"}, {task_id: "T041", description: "UI tests"}]
+  - phase_id: "Phase-6"
+    phase_name: "US4 Save and reopen offline"
+    items:
+      - item_id: "6.1"
+        description: "Cache shell and persist validated trip snapshots"
+        tasks: [{task_id: "T042", description: "PWA shell"}, {task_id: "T043", description: "IndexedDB snapshot"}, {task_id: "T046", description: "Offline acceptance"}]
+      - item_id: "6.2"
+        description: "Persist trip snapshots and provide saved-trip UX"
+        tasks: [{task_id: "T043", description: "IndexedDB snapshot"}, {task_id: "T044", description: "Saved trip/offline UI"}, {task_id: "T045", description: "Storage/UI tests"}, {task_id: "T046", description: "Offline acceptance"}]
+  - phase_id: "Phase-7"
+    phase_name: "Polish and end-to-end acceptance"
+    items:
+      - item_id: "7.1"
+        description: "Verify journeys, privacy and failure behavior"
+        tasks: [{task_id: "T047", description: "Backend integration tests"}, {task_id: "T048", description: "Frontend flow test"}, {task_id: "T049", description: "Data review"}, {task_id: "T050", description: "Security review"}, {task_id: "T051", description: "Build/manual acceptance"}]
+      - item_id: "7.2"
+        description: "Freeze demo and handoff"
+        tasks: [{task_id: "T052", description: "README"}, {task_id: "T053", description: "Repeat clean demo"}]
+missing_plan_items: []
+orphan_tasks: []
+upstream_trace:
+  - plan_item: "1.1"
+    source_requirements: ["REQ-012", "REQ-013"]
+    tasks: ["T001", "T002", "T003", "T004"]
+  - plan_item: "2.1"
+    source_requirements: ["REQ-001", "REQ-006", "REQ-012"]
+    tasks: ["T005", "T006", "T007", "T008", "T009"]
+  - plan_item: "2.2"
+    source_requirements: ["REQ-002", "REQ-003", "REQ-007", "REQ-008", "REQ-012", "REQ-013"]
+    tasks: ["T010", "T011", "T012", "T013"]
+  - plan_item: "3.1"
+    source_requirements: ["REQ-001", "REQ-006"]
+    tasks: ["T014", "T015", "T016", "T022", "T023"]
+  - plan_item: "3.2"
+    source_requirements: ["REQ-002", "REQ-003"]
+    tasks: ["T017", "T018", "T019", "T022", "T023"]
+  - plan_item: "3.3"
+    source_requirements: ["REQ-004", "REQ-005", "REQ-006"]
+    tasks: ["T020", "T021", "T022", "T023"]
+  - plan_item: "4.1"
+    source_requirements: ["REQ-007", "REQ-008", "REQ-009"]
+    tasks: ["T024", "T025", "T026", "T027"]
+  - plan_item: "4.2"
+    source_requirements: ["REQ-008", "REQ-012"]
+    tasks: ["T028", "T029", "T030"]
+  - plan_item: "5.1"
+    source_requirements: ["REQ-010", "REQ-011", "REQ-013"]
+    tasks: ["T031", "T032", "T033", "T034", "T035"]
+  - plan_item: "5.2"
+    source_requirements: ["REQ-002", "REQ-003", "REQ-004", "REQ-005", "REQ-006", "REQ-011"]
+    tasks: ["T036", "T037", "T038", "T039"]
+  - plan_item: "5.3"
+    source_requirements: ["REQ-007", "REQ-008", "REQ-011"]
+    tasks: ["T040", "T041"]
+  - plan_item: "6.1"
+    source_requirements: ["REQ-009", "REQ-010"]
+    tasks: ["T042", "T043", "T046"]
+  - plan_item: "6.2"
+    source_requirements: ["REQ-009"]
+    tasks: ["T043", "T044", "T045", "T046"]
+  - plan_item: "7.1"
+    source_requirements: ["REQ-002", "REQ-003", "REQ-005", "REQ-007", "REQ-008", "REQ-009", "REQ-012", "REQ-013"]
+    tasks: ["T047", "T048", "T049", "T050", "T051"]
+  - plan_item: "7.2"
+    source_requirements: ["REQ-001", "REQ-002", "REQ-003", "REQ-004", "REQ-005", "REQ-006", "REQ-007", "REQ-008", "REQ-009", "REQ-010", "REQ-011", "REQ-012", "REQ-013"]
+    tasks: ["T052", "T053"]
+validation:
+  passed: true
+  errors: []
+  warnings:
+    - "Plan items 6.1 and 6.2 describe one offline workstream and intentionally share tasks."
+    - "Paths in plan.md are target paths; workspace had no application code."
