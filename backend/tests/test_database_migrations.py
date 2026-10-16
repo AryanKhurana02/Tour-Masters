@@ -8,7 +8,7 @@ import pytest
 from app.db.database import SCHEMA_PATH, connect_database, initialize_database
 
 
-def test_schema_v1_migrates_additively_to_v4(tmp_path: Path) -> None:
+def test_schema_v1_migrates_additively_to_latest(tmp_path: Path) -> None:
     database = tmp_path / "legacy.db"
     with sqlite3.connect(database) as connection:
         connection.execute("PRAGMA foreign_keys = ON")
@@ -30,7 +30,7 @@ def test_schema_v1_migrates_additively_to_v4(tmp_path: Path) -> None:
     initialize_database(database)
 
     with sqlite3.connect(database) as connection:
-        assert connection.execute("PRAGMA user_version").fetchone()[0] == 4
+        assert connection.execute("PRAGMA user_version").fetchone()[0] == 5
         assert connection.execute("SELECT name FROM destinations WHERE id = 1").fetchone() == (
             "Existing place",
         )
@@ -52,6 +52,14 @@ def test_schema_v1_migrates_additively_to_v4(tmp_path: Path) -> None:
             "data_source_refreshes",
             "live_tourist_metrics",
         } <= tables
+        climatology_columns = {
+            row[1] for row in connection.execute("PRAGMA table_info(weather_climatology)")
+        }
+        assert {"mean_cloud_cover_pct", "mean_wind_speed_kmh", "hci_score"} <= climatology_columns
+        forecast_columns = {
+            row[1] for row in connection.execute("PRAGMA table_info(weather_forecasts)")
+        }
+        assert {"cloud_cover_pct", "wind_speed_kmh", "hci_score"} <= forecast_columns
 
 
 def test_fresh_database_applies_all_migrations(tmp_path: Path) -> None:
@@ -60,7 +68,7 @@ def test_fresh_database_applies_all_migrations(tmp_path: Path) -> None:
     initialize_database(database)
 
     with connect_database(database) as connection:
-        assert connection.execute("PRAGMA user_version").fetchone()[0] == 4
+        assert connection.execute("PRAGMA user_version").fetchone()[0] == 5
         with pytest.raises(sqlite3.IntegrityError):
             with connection:
                 connection.execute(

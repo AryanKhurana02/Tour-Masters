@@ -7,7 +7,7 @@ export function CrowdBreakdown({ crowd, animate = true }: { crowd: CrowdEstimate
     { label: "Popularity", value: crowd.popularity, icon: UsersRound },
     { label: "Date demand", value: crowd.date_demand, icon: CalendarDays },
     { label: "Event activity", value: crowd.event_pressure, icon: CircleHelp },
-    { label: "Weather tendency", value: crowd.weather_visit_tendency, icon: CloudSun },
+    { label: "Weather (HCI)", value: crowd.weather_visit_tendency, icon: CloudSun },
   ];
   return (
     <section className="crowd-panel" aria-label="Estimated crowd level">

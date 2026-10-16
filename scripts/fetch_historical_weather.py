@@ -8,6 +8,7 @@ Run from anywhere:  py -3.12 scripts/fetch_historical_weather.py
 The CSV is consumed by backend/app/services/weather_history.py to compute
 offline monthly rainfall climatology per destination (weather friction for
 crowd estimates when no fresh forecast is stored).
+Now includes HCI variables: cloudcover_mean, windspeed_10m_max
 """
 
 from __future__ import annotations
@@ -29,7 +30,8 @@ START_DATE = "2021-01-01"
 END_DATE = "2026-09-30"  # Multi-year historical range
 
 API_URL = "https://archive-api.open-meteo.com/v1/archive"
-DAILY_VARS = "temperature_2m_max,temperature_2m_min,precipitation_sum,rain_sum,snowfall_sum"
+# Added cloudcover_mean and windspeed_10m_max for HCI calculation
+DAILY_VARS = "temperature_2m_max,temperature_2m_min,precipitation_sum,rain_sum,snowfall_sum,cloudcover_mean,windspeed_10m_max"
 TIMEZONE = "Asia%2FKolkata"
 
 # Key Uttarakhand tourist & eco-sensitive nodes.
@@ -62,6 +64,8 @@ FIELDNAMES = [
     "snowfall_cm",
     "temp_max_c",
     "temp_min_c",
+    "cloud_cover_pct",
+    "wind_speed_kmh",
     "high_landslide_risk",
 ]
 
@@ -129,6 +133,8 @@ def fetch_node_historical_weather(node: dict) -> list[dict]:
         snow = daily.get("snowfall_sum") or []
         temp_max = daily.get("temperature_2m_max") or []
         temp_min = daily.get("temperature_2m_min") or []
+        cloud_cover = daily.get("cloudcover_mean") or []
+        wind_speed = daily.get("windspeed_10m_max") or []
 
         for index, day in enumerate(dates):
             records.append(
@@ -139,6 +145,8 @@ def fetch_node_historical_weather(node: dict) -> list[dict]:
                     "snowfall_cm": snow[index] if index < len(snow) and snow[index] is not None else 0.0,
                     "temp_max_c": temp_max[index] if index < len(temp_max) and temp_max[index] is not None else 0.0,
                     "temp_min_c": temp_min[index] if index < len(temp_min) and temp_min[index] is not None else 0.0,
+                    "cloud_cover_pct": cloud_cover[index] if index < len(cloud_cover) and cloud_cover[index] is not None else 50,
+                    "wind_speed_kmh": wind_speed[index] if index < len(wind_speed) and wind_speed[index] is not None else 10,
                 }
             )
         time.sleep(PAUSE_BETWEEN_CALLS_SECONDS)
@@ -169,6 +177,8 @@ def generate_weather_dataset() -> int:
                     "snowfall_cm": round(record["snowfall_cm"], 1),
                     "temp_max_c": round(record["temp_max_c"], 1),
                     "temp_min_c": round(record["temp_min_c"], 1),
+                    "cloud_cover_pct": int(round(record["cloud_cover_pct"])),
+                    "wind_speed_kmh": round(record["wind_speed_kmh"], 1),
                     "high_landslide_risk": 1 if record["precipitation_mm"] > 40.0 else 0,
                 }
             )

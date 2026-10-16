@@ -79,12 +79,24 @@ def _series(
     minimums: list[float] | None = None,
     means: list[float] | None = None,
     rain: list[float] | None = None,
+    cloud: list[float] | None = None,
+    wind: list[float] | None = None,
 ) -> list[list[float]]:
+    maxs = maximums if maximums is not None else [20.0, 30.0, 10.0]
+    n = len(maxs)
+
+    def pick(values: list[float] | None, fallback: list[float]) -> list[float]:
+        if values is not None:
+            return values
+        return (fallback * ((n // len(fallback)) + 1))[:n]
+
     return [
-        maximums or [20.0, 30.0, 10.0],
-        minimums or [10.0, 15.0, 2.0],
-        means or [15.0, 22.0, 6.0],
-        rain or [0.0, 10.0, 2.0],
+        maxs,
+        pick(minimums, [10.0, 15.0, 2.0]),
+        pick(means, [15.0, 22.0, 6.0]),
+        pick(rain, [0.0, 10.0, 2.0]),
+        pick(cloud, [40.0, 60.0, 30.0]),
+        pick(wind, [8.0, 20.0, 12.0]),
     ]
 
 
@@ -121,6 +133,8 @@ def test_refresh_persists_five_year_monthly_climate_and_sixteen_day_forecast(
         "temperature_2m_min",
         "temperature_2m_mean",
         "precipitation_sum",
+        "cloudcover_mean",
+        "windspeed_10m_max",
     ]
     assert forecast_client.calls[0][0] == "https://api.open-meteo.com/v1/forecast"
     assert forecast_client.calls[0][1]["forecast_days"] == 16
@@ -142,8 +156,11 @@ def test_refresh_persists_five_year_monthly_climate_and_sixteen_day_forecast(
     assert climate["sample_count"] == 3
     assert climate["mean_temp_max"] == pytest.approx(20.0)
     assert climate["mean_precipitation_mm"] == pytest.approx(4.0)
+    assert climate["hci_score"] is not None
     assert forecast["weather_visit_tendency"] == 100
-    assert tendency is not None and tendency["value"] == 100
+    # Holiday Climate Index: T(15C)=10, A(40%)=7, Rd(0mm)=10, W(8km/h)=10 -> 94.
+    assert forecast["hci_score"] == 94
+    assert tendency is not None and tendency["value"] == 94
     assert "forecast" in str(tendency["note"]).lower()
     assert (tmp_path / "raw" / "archive" / "open_meteo_archive_1.csv").is_file()
     assert (tmp_path / "raw" / "forecast" / "open_meteo_forecast_1.csv").is_file()
@@ -225,7 +242,8 @@ def test_invalid_openmeteo_daily_values_are_not_saved(tmp_path: Path) -> None:
     database = tmp_path / "catalogue.db"
     _create_weather_database(database)
     broken_client = _Client(
-        [[float("nan")], [float("nan")], [float("nan")], [float("nan")]]
+        [[float("nan")], [float("nan")], [float("nan")], [float("nan")],
+         [float("nan")], [float("nan")]]
     )
     forecast_client = _Client(_series(maximums=[20.0], minimums=[10.0],
                                       means=[15.0], rain=[0.0]))

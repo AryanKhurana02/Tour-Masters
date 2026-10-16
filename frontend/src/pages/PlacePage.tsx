@@ -6,6 +6,7 @@ import { CrowdBreakdown } from "../components/CrowdBreakdown";
 import { LiveCrowdMeter } from "../components/LiveCrowdMeter";
 import { HolidayCrowdOverview } from "../components/HolidayCrowdOverview";
 import { FrictionCueBadge } from "../components/FrictionCueBadge";
+import { SafetyAlertCard } from "../components/SafetyAlertCard";
 import { DataHonestyCue } from "../components/DataHonestyCue";
 import { MonthStrip } from "../components/MonthStrip";
 import { StayBookingPanel } from "../components/StayBookingPanel";
@@ -186,6 +187,7 @@ export function PlacePage() {
           <>
             <CrowdBreakdown crowd={crowd} />
             {frictionCue && <FrictionCueBadge cue={frictionCue} />}
+            {crowd.safety_alert && <SafetyAlertCard alert={crowd.safety_alert} />}
           </>
         ) : (
           <p className="quiet">Select dates from trip results to see the estimate.</p>

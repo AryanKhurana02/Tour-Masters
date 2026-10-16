@@ -53,7 +53,19 @@ class HistoricalWeatherSignal(BaseModel):
     landslide_risk_probability: float | None = None
     friction: int | None = Field(default=None, ge=0, le=100)
     visit_tendency: int | None = Field(default=None, ge=0, le=100)
+    hci_score: int | None = Field(default=None, ge=0, le=100)
     source: str | None = None
+
+
+class SafetyAlert(BaseModel):
+    """Travel-safety advisory derived from real historical weather signals."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    severity: Literal["medium"] | Literal["high"]
+    landslide_risk_probability: float | None = Field(default=None, ge=0.0, le=1.0)
+    wet_day_probability: float | None = Field(default=None, ge=0.0, le=1.0)
+    message: str = Field(min_length=1)
 
 
 class CrowdEstimate(BaseModel):
@@ -71,6 +83,7 @@ class CrowdEstimate(BaseModel):
     reviewed_at: date
     friction_cue: Optional[CrowdFrictionCue] = None
     historical_weather: Optional[HistoricalWeatherSignal] = None
+    safety_alert: Optional[SafetyAlert] = None
 
 
 class RecommendationFits(BaseModel):

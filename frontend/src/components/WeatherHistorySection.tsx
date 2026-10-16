@@ -75,26 +75,41 @@ export function WeatherHistorySection({
 
           <div className="weather-metric">
             <div className="metric-icon">
-              {historicalWeather.friction != null && historicalWeather.friction > 50
+              {historicalWeather.hci_score != null && historicalWeather.hci_score < 50
                 ? <AlertTriangle size={20} />
                 : <Sun size={20} />}
             </div>
             <div className="metric-content">
-              <span className="metric-label">Travel friction</span>
+              <span className="metric-label">Weather comfort (HCI)</span>
               <span className="metric-value">
-                {historicalWeather.friction != null ? historicalWeather.friction : "—"}/100
+                {historicalWeather.hci_score != null ? historicalWeather.hci_score : "—"}/100
               </span>
               <span className="metric-detail">
-                {historicalWeather.friction != null
-                  ? historicalWeather.friction > 60
-                    ? "High — expect delays & wet conditions"
-                    : historicalWeather.friction > 30
-                    ? "Moderate — some rain likely"
-                    : "Low — generally pleasant"
+                {historicalWeather.hci_score != null
+                  ? historicalWeather.hci_score >= 75
+                    ? "Ideal — clear, comfortable days"
+                    : historicalWeather.hci_score >= 50
+                    ? "Fair — mixed conditions"
+                    : "Challenging — rain, cloud or cold"
                   : ""}
               </span>
             </div>
           </div>
+
+          {historicalWeather.friction != null && historicalWeather.friction > 50 && (
+            <div className="weather-metric">
+              <div className="metric-icon"><CloudRain size={20} /></div>
+              <div className="metric-content">
+                <span className="metric-label">Travel friction</span>
+                <span className="metric-value">{historicalWeather.friction}/100</span>
+                <span className="metric-detail">
+                  {historicalWeather.friction > 60
+                    ? "High — expect delays & wet conditions"
+                    : "Moderate — some rain likely"}
+                </span>
+              </div>
+            </div>
+          )}
 
           {historicalWeather.landslide_risk_probability != null &&
             historicalWeather.landslide_risk_probability > 0.01 && (

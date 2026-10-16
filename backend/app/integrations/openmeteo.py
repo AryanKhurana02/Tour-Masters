@@ -26,6 +26,8 @@ DAILY_VARIABLES = (
     "temperature_2m_min",
     "temperature_2m_mean",
     "precipitation_sum",
+    "cloudcover_mean",
+    "windspeed_10m_max",
 )
 logger = logging.getLogger("pahadpath.openmeteo")
 
@@ -73,6 +75,7 @@ def create_client(cache_path: str | Path, *, expire_after: int) -> OpenMeteoClie
 
 
 def _weather_tendency(temp_max: float, temp_min: float, precipitation_mm: float) -> int:
+    """Legacy function kept for backward compatibility. Use calculate_mountain_hci for new code."""
     rain_friction = min(60.0, max(0.0, precipitation_mm) * 2.0)
     temperature_friction = min(
         25.0,
@@ -109,7 +112,7 @@ def _daily_rows(
         values = [column[index] for column in series]
         if not all(math.isfinite(value) and abs(value) < 1e10 for value in values):
             continue
-        temp_max, temp_min, temp_mean, precipitation = values
+        temp_max, temp_min, temp_mean, precipitation, cloud_cover, wind_speed = values
         if precipitation < 0:
             continue
         target_date = first_date + timedelta(days=index)
@@ -120,6 +123,8 @@ def _daily_rows(
                 "temp_min": temp_min,
                 "temp_mean": temp_mean,
                 "precipitation_mm": precipitation,
+                "cloud_cover_pct": cloud_cover,
+                "wind_speed_kmh": wind_speed,
                 "weather_visit_tendency": _weather_tendency(
                     temp_max,
                     temp_min,
@@ -160,12 +165,76 @@ def _write_raw_csv(
         "temp_min",
         "temp_mean",
         "precipitation_mm",
+        "cloud_cover_pct",
+        "wind_speed_kmh",
         "weather_visit_tendency",
     )
     with file_path.open("w", newline="", encoding="utf-8") as file:
         writer = csv.DictWriter(file, fieldnames=fields)
         writer.writeheader()
         writer.writerows(rows)
+
+
+def _weather_tendency(temp_max: float, temp_min: float, precipitation_mm: float) -> int:
+    """Legacy function kept for backward compatibility. Use calculate_mountain_hci for new code."""
+    rain_friction = min(60.0, max(0.0, precipitation_mm) * 2.0)
+    temperature_friction = min(
+        25.0,
+        max(0.0, 8.0 - temp_min) * 1.25 + max(0.0, temp_max - 32.0) * 1.25,
+    )
+    return max(0, min(100, round(100.0 - rain_friction - temperature_friction)))
+
+
+def _calculate_hci(temp_max: float, temp_min: float, precipitation_mm: float, cloud_cover_pct: float, wind_speed_kmh: float) -> int:
+    """Calculate Holiday Climate Index (HCI) for mountain topography.
+    
+    Formula: HCI = 4T + 2A + 3Rd + W (max 100)
+    """
+    temp_mean = (temp_max + temp_min) / 2.0
+    
+    # Thermal Comfort (T) - Peak comfort 15-25°C for mountain tourism
+    if 15 <= temp_mean <= 25:
+        T = 10
+    elif 10 <= temp_mean < 15 or 25 < temp_mean <= 30:
+        T = 7
+    elif 5 <= temp_mean < 10:
+        T = 4
+    else:
+        T = 2
+
+    # Cloud Cover (A) - Penalize heavy overcast hiding mountain views
+    if cloud_cover_pct <= 20:
+        A = 10
+    elif cloud_cover_pct <= 50:
+        A = 7
+    elif cloud_cover_pct <= 80:
+        A = 4
+    else:
+        A = 2
+
+    # Rain / Precipitation (Rd) - Severe penalty for mountain landslide risk
+    if precipitation_mm == 0:
+        Rd = 10
+    elif precipitation_mm <= 5:
+        Rd = 6
+    elif precipitation_mm <= 15:
+        Rd = 3
+    else:
+        Rd = 0
+
+    # Wind Speed (W)
+    if wind_speed_kmh <= 10:
+        W = 10
+    elif wind_speed_kmh <= 25:
+        W = 7
+    elif wind_speed_kmh <= 40:
+        W = 4
+    else:
+        W = 0
+
+    # HCI Formula: 4T + 2A + 3Rd + W (Max possible: 40 + 20 + 30 + 10 = 100)
+    hci_score = (4 * T) + (2 * A) + (3 * Rd) + W
+    return max(0, min(100, hci_score))
 
 
 def _upsert_climatology(
@@ -183,8 +252,13 @@ def _upsert_climatology(
         count = len(month_rows)
         means = {
             field: sum(float(row[field]) for row in month_rows) / count
-            for field in ("temp_max", "temp_min", "temp_mean", "precipitation_mm")
+            for field in ("temp_max", "temp_min", "temp_mean", "precipitation_mm", "cloud_cover_pct", "wind_speed_kmh")
         }
+        # Calculate HCI from monthly means
+        hci_score = _calculate_hci(
+            means["temp_max"], means["temp_min"], means["precipitation_mm"],
+            means["cloud_cover_pct"], means["wind_speed_kmh"]
+        )
         tendency = round(
             sum(int(row["weather_visit_tendency"]) for row in month_rows) / count
         )
@@ -192,15 +266,19 @@ def _upsert_climatology(
             """
             INSERT INTO weather_climatology (
                 destination_id, calendar_month, mean_temp_max, mean_temp_min, mean_temp,
-                mean_precipitation_mm, weather_visit_tendency, sample_count,
+                mean_precipitation_mm, mean_cloud_cover_pct, mean_wind_speed_kmh,
+                weather_visit_tendency, hci_score, sample_count,
                 retrieved_at, source_url
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(destination_id, calendar_month) DO UPDATE SET
                 mean_temp_max=excluded.mean_temp_max,
                 mean_temp_min=excluded.mean_temp_min,
                 mean_temp=excluded.mean_temp,
                 mean_precipitation_mm=excluded.mean_precipitation_mm,
+                mean_cloud_cover_pct=excluded.mean_cloud_cover_pct,
+                mean_wind_speed_kmh=excluded.mean_wind_speed_kmh,
                 weather_visit_tendency=excluded.weather_visit_tendency,
+                hci_score=excluded.hci_score,
                 sample_count=excluded.sample_count,
                 retrieved_at=excluded.retrieved_at,
                 source_url=excluded.source_url
@@ -212,7 +290,10 @@ def _upsert_climatology(
                 means["temp_min"],
                 means["temp_mean"],
                 means["precipitation_mm"],
+                means["cloud_cover_pct"],
+                means["wind_speed_kmh"],
                 tendency,
+                hci_score,
                 count,
                 retrieved_at,
                 ARCHIVE_SOURCE_URL,
@@ -229,18 +310,27 @@ def _upsert_forecast(
     expires_at: str,
 ) -> int:
     for row in rows:
+        # Calculate HCI for this forecast day
+        hci_score = _calculate_hci(
+            row["temp_max"], row["temp_min"], row["precipitation_mm"],
+            row.get("cloud_cover_pct", 50), row.get("wind_speed_kmh", 10)
+        )
         connection.execute(
             """
             INSERT INTO weather_forecasts (
                 destination_id, forecast_date, temp_max, temp_min, temp_mean,
-                precipitation_mm, weather_visit_tendency, retrieved_at, expires_at, source_url
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                precipitation_mm, cloud_cover_pct, wind_speed_kmh,
+                weather_visit_tendency, hci_score, retrieved_at, expires_at, source_url
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(destination_id, forecast_date) DO UPDATE SET
                 temp_max=excluded.temp_max,
                 temp_min=excluded.temp_min,
                 temp_mean=excluded.temp_mean,
                 precipitation_mm=excluded.precipitation_mm,
+                cloud_cover_pct=excluded.cloud_cover_pct,
+                wind_speed_kmh=excluded.wind_speed_kmh,
                 weather_visit_tendency=excluded.weather_visit_tendency,
+                hci_score=excluded.hci_score,
                 retrieved_at=excluded.retrieved_at,
                 expires_at=excluded.expires_at,
                 source_url=excluded.source_url
@@ -252,7 +342,10 @@ def _upsert_forecast(
                 row["temp_min"],
                 row["temp_mean"],
                 row["precipitation_mm"],
+                row.get("cloud_cover_pct", 50),
+                row.get("wind_speed_kmh", 10),
                 row["weather_visit_tendency"],
+                hci_score,
                 retrieved_at,
                 expires_at,
                 FORECAST_SOURCE_URL,

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import { CrowdBreakdown } from "../components/CrowdBreakdown";
+import { SafetyAlertCard } from "../components/SafetyAlertCard";
 import { StayCard } from "../components/StayCard";
 import { createItinerary, getRouteFromHub } from "../services/api";
 import type { RecommendationRequest, RecommendationResponse, RouteEstimate } from "../types/api";
@@ -120,6 +121,7 @@ export function ResultsPage() {
                   <span className="rank-pill"><Sparkles size={13} /> Match {Math.round(item.rank_score)}</span>
                 </div>
                 <div className="match-estimate"><CrowdBreakdown crowd={item.crowd} animate={index === 0} /></div>
+                {item.crowd.safety_alert && <SafetyAlertCard alert={item.crowd.safety_alert} />}
                 <ul className="reason-list">{item.reasons.map((reason) => <li key={reason}>{reason}</li>)}</ul>
                 <section className="route-context" aria-label={`Route context for ${item.destination.name}`}>
                   {item.destination.name === "Mussoorie" && (

@@ -98,11 +98,22 @@ export interface HistoricalWeatherSignal {
   avg_precipitation_mm?: number;
   avg_temp_max_c?: number;
   avg_temp_min_c?: number;
+  avg_cloud_cover_pct?: number;
+  avg_wind_speed_kmh?: number;
   wet_day_probability?: number;
   landslide_risk_probability?: number;
   friction?: number;
+  visit_tendency?: number;
+  hci_score?: number;
   source?: string;
   note?: string;
+}
+
+export interface SafetyAlert {
+  severity: "medium" | "high";
+  landslide_risk_probability?: number;
+  wet_day_probability?: number;
+  message: string;
 }
 
 export interface CrowdEstimate {
@@ -122,6 +133,7 @@ export interface CrowdEstimate {
     severity: "low" | "medium" | "high";
   };
   historical_weather?: HistoricalWeatherSignal;
+  safety_alert?: SafetyAlert;
 }
 
 export interface RecommendationItem {
@@ -183,10 +195,13 @@ export interface MonthlyClimatology {
   avg_snowfall_cm: number;
   avg_temp_max_c: number;
   avg_temp_min_c: number;
+  avg_cloud_cover_pct: number;
+  avg_wind_speed_kmh: number;
   wet_day_probability: number;
   landslide_risk_probability: number;
   friction: number;
   visit_tendency: number;
+  hci_score: number;
   sample_days: number;
   source: string;
   note: string;
